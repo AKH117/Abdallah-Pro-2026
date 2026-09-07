@@ -3686,8 +3686,6 @@ async function initDashboard() {
 
     checkSandboxModeState();
 
-    setInterval(checkSandboxModeState, 6000);
-
     tabsInitialized = true;
 
   }
