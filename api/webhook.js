@@ -113,3 +113,66 @@ export default async function handler(req, res) {
 
   return res.status(405).json({ error: 'Method not allowed' });
 }
+
+// 🌐 Standalone HTTP Server for Render / Railway / VPS
+if (process.env.PORT) {
+  import('http').then(({ default: http }) => {
+    import('url').then(({ default: url }) => {
+      const server = http.createServer(async (req, res) => {
+        res.status = function(code) { this.statusCode = code; return this; };
+        res.json = function(data) {
+          this.setHeader('Content-Type', 'application/json; charset=utf-8');
+          this.end(JSON.stringify(data));
+        };
+        res.send = function(content) {
+          this.setHeader('Content-Type', 'text/html; charset=utf-8');
+          this.end(content);
+        };
+
+        const parsedUrl = url.parse(req.url, true);
+        req.query = parsedUrl.query || {};
+
+        if (req.method === 'POST') {
+          let body = '';
+          req.on('data', chunk => { body += chunk; });
+          req.on('end', async () => {
+            try {
+              req.body = body ? JSON.parse(body) : {};
+            } catch (e) {
+              req.body = {};
+            }
+            await handler(req, res);
+          });
+        } else {
+          await handler(req, res);
+        }
+      });
+
+      const port = process.env.PORT || 3000;
+      server.listen(port, '0.0.0.0', () => {
+        console.log(`🚀 Abdullah's Journey OS Server listening on 0.0.0.0:${port}`);
+      });
+
+      // ⏰ Start Autonomous Background Scheduler Daemon (Prayers, Azkar, Quizzes, Spaced Repetition)
+      import('../lib/scheduler.js').then(({ runSchedulerCycle }) => {
+        const targetChatId = process.env.TELEGRAM_CHAT_ID || process.env.AUTHORIZED_USERS?.split(',')[0]?.trim() || '1191760477';
+        console.log(`⏰ [Daemon Initialized] 24/7 Background Scheduler Active for Chat ID: ${targetChatId}`);
+        let isRunningCycle = false;
+        async function runCycle() {
+          if (isRunningCycle || !bot) return;
+          isRunningCycle = true;
+          try {
+            await runSchedulerCycle(bot, targetChatId);
+          } catch (e) {
+            console.error('[Daemon Error]:', e.message);
+          } finally {
+            isRunningCycle = false;
+          }
+        }
+        setTimeout(runCycle, 5000);
+        setInterval(runCycle, 30000);
+      }).catch(err => console.error('Failed to load scheduler in standalone mode:', err));
+    });
+  });
+}
+
