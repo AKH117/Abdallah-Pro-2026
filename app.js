@@ -614,6 +614,10 @@ function initTabs() {
 
       }
 
+      if (tab.dataset.tab === 'quizzes' && typeof loadQuizzesPortalData === 'function') {
+        loadQuizzesPortalData();
+      }
+
     });
 
   });
@@ -659,6 +663,10 @@ window.switchTabDirect = function(tabName) {
     }
 
   });
+
+  if (tabName === 'quizzes' && typeof loadQuizzesPortalData === 'function') {
+    loadQuizzesPortalData();
+  }
 
   if (typeof window.toggleMobileSidebar === 'function') {
 
@@ -1252,14 +1260,20 @@ function getUID() {
 
 function cleanUserTag(str) {
   if (!str || typeof str !== 'string') return str;
-  return str.replace(/\[usr:\d+\]\s*/g, '').replace(/usr:\d+\s*/g, '').trim();
+  return str
+    .replace(/\[usr:\d+\]\s*/gi, '')
+    .replace(/usr:\d+\s*/gi, '')
+    .replace(/\[UID:\d+\]\s*/gi, '')
+    .replace(/UID:\d+\s*/gi, '')
+    .trim();
 }
 
 function userMatchesRow(row, uid) {
   if (!row) return false;
   const numUid = Number(uid || window.CURRENT_USER_ID || 0);
   if (!numUid) return false;
-  const tag = `usr:${numUid}`;
+  const tag1 = `usr:${numUid}`;
+  const tag2 = `UID:${numUid}`;
   
   if (row.telegram_id && Number(row.telegram_id) === numUid) return true;
 
@@ -1270,10 +1284,10 @@ function userMatchesRow(row, uid) {
     row.venting_content, row.muscle_groups, row.category, row.ai_therapeutic_feedback,
     row.daily_reflection, row.session_type
   ];
-  const hasThisUserTag = textFields.some(t => typeof t === 'string' && t.includes(tag));
+  const hasThisUserTag = textFields.some(t => typeof t === 'string' && (t.includes(tag1) || t.includes(tag2)));
   
   if (numUid === 1191760477) {
-    const hasAnyUserTag = textFields.some(t => typeof t === 'string' && t.includes('usr:'));
+    const hasAnyUserTag = textFields.some(t => typeof t === 'string' && (t.includes('usr:') || t.includes('UID:')));
     return hasThisUserTag || !hasAnyUserTag;
   }
   return hasThisUserTag;
@@ -3708,7 +3722,8 @@ async function initDashboard() {
     renderTasksAndAppointments(),
     renderThoughtsSection(),
     renderFinanceSection(),
-    loadAdminPortalData()
+    loadAdminPortalData(),
+    loadQuizzesPortalData()
   ]);
 }
 
@@ -4216,6 +4231,17 @@ async function modifyStudentSubscription(telegramId, days, status) {
       data: sessionData,
       updated_at: new Date().toISOString()
     });
+
+    // 2. Also update users table to keep both stores 100% in sync
+    try {
+      await db.from('users').update({
+        subscription_status: status,
+        subscription_ends_at: newEnd,
+        updated_at: new Date().toISOString()
+      }).eq('telegram_id', Number(telegramId));
+    } catch (uErr) {
+      console.warn('users table subscription update warn:', uErr);
+    }
 
     alert('✅ تم تحديث وتفعيل اشتراك الطالب بنجاح!');
     await loadAdminPortalData();
@@ -5163,6 +5189,313 @@ window.logUrgeVictoryWeb = async function() {
     alert('❌ خطأ: ' + err.message);
   }
 };
+
+// ==============================================================================
+// 🎯 Quizzes Hub & Review Archive Engine (سجل وبنك الأسئلة التفاعلية)
+// ==============================================================================
+
+window._ALL_QUIZZES = [];
+
+function getCourseDisplayMeta(code) {
+  const c = String(code || 'MED').toUpperCase();
+  switch (c) {
+    case 'MED':
+      return { icon: '🩺', name: 'الطب والسكاشن الإكلينيكية', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.12)', border: 'rgba(56, 189, 248, 0.3)' };
+    case 'SHARIA':
+      return { icon: '📖', name: 'العلم الشرعي والفقه الإسلامي', color: '#fbbf24', bg: 'rgba(251, 191, 36, 0.12)', border: 'rgba(251, 191, 36, 0.3)' };
+    case 'BUKHARI':
+      return { icon: '📜', name: 'صحيح البخاري ورسائل السلف', color: '#34d399', bg: 'rgba(52, 211, 153, 0.12)', border: 'rgba(52, 211, 153, 0.3)' };
+    case 'QURAN_ASBAB':
+      return { icon: '📖', name: 'القرآن العظيم وأسباب النزول', color: '#c084fc', bg: 'rgba(192, 132, 252, 0.12)', border: 'rgba(192, 132, 252, 0.3)' };
+    case 'SAHABA_SPOTLIGHT':
+      return { icon: '🌟', name: 'صحابي اليوم ورجال الدولة', color: '#67e8f9', bg: 'rgba(103, 232, 249, 0.12)', border: 'rgba(103, 232, 249, 0.3)' };
+    case 'DISCIPLINE':
+      return { icon: '🧠', name: 'علم الأعصاب والانضباط والدوبامين', color: '#818cf8', bg: 'rgba(129, 140, 248, 0.12)', border: 'rgba(129, 140, 248, 0.3)' };
+    case 'STATESMAN':
+      return { icon: '👑', name: 'إعداد رجل الدولة وتاريخ الخلفاء', color: '#f43f5e', bg: 'rgba(244, 63, 94, 0.12)', border: 'rgba(244, 63, 94, 0.3)' };
+    case 'PURITY':
+      return { icon: '🛡️', name: 'وقود النقاء والتميز الإيماني', color: '#2dd4bf', bg: 'rgba(45, 212, 191, 0.12)', border: 'rgba(45, 212, 191, 0.3)' };
+    case 'PROPHETIC_LEADERSHIP':
+      return { icon: '⚔️', name: 'القيادة النبوية الشريفة', color: '#10b981', bg: 'rgba(16, 185, 129, 0.12)', border: 'rgba(16, 185, 129, 0.3)' };
+    default:
+      return { icon: '🎯', name: 'كويز تفاعلي', color: '#60a5fa', bg: 'rgba(96, 165, 250, 0.12)', border: 'rgba(96, 165, 250, 0.3)' };
+  }
+}
+
+async function loadQuizzesPortalData(forceFresh = false) {
+  const container = document.getElementById('quizzesGridContainer');
+  if (!container) return;
+
+  if (forceFresh || !window._ALL_QUIZZES || window._ALL_QUIZZES.length === 0) {
+    container.innerHTML = '<div class="empty-state" style="grid-column: 1 / -1; padding: 40px; text-align: center;">⏳ جاري جلب وتحديث سجل الأسئلة والكويزات من السيرفر...</div>';
+  }
+
+  try {
+    const { data: rows, error } = await userQuery('medical_spaced_quizzes').order('id', { ascending: false });
+    if (error || !rows) {
+      container.innerHTML = '<div class="empty-state" style="grid-column: 1 / -1; color: #f87171;">تعذر تحميل سجل الأسئلة حالياً. يُرجى المحاولة لاحقاً.</div>';
+      return;
+    }
+
+    const quizzes = rows.map(row => {
+      const cleanTopic = cleanUserTag(row.topic || '');
+      let options = [];
+      let correctIndex = 0;
+      let explanation = row.answer_and_explanation || row.explanation || '';
+      let lastAnswerCorrect = null;
+      let lastAnsweredAt = row.last_reviewed_at || null;
+      let selectedIndex = null;
+      let attempts = 0;
+
+      if (row.doctor_pearl && row.doctor_pearl.includes('<<<QUIZ_META_START>>>')) {
+        try {
+          const jsonStr = row.doctor_pearl.split('<<<QUIZ_META_START>>>')[1].split('<<<QUIZ_META_END>>>')[0];
+          const parsedMeta = JSON.parse(jsonStr);
+          if (Array.isArray(parsedMeta.options) && parsedMeta.options.length > 0) {
+            options = parsedMeta.options;
+          }
+          if (parsedMeta.correct_index !== undefined) correctIndex = Number(parsedMeta.correct_index);
+          if (parsedMeta.explanation) explanation = parsedMeta.explanation;
+          if (parsedMeta.last_answer_correct !== undefined) lastAnswerCorrect = parsedMeta.last_answer_correct;
+          if (parsedMeta.last_answered_at) lastAnsweredAt = parsedMeta.last_answered_at;
+          if (parsedMeta.selected_option_index !== undefined) selectedIndex = Number(parsedMeta.selected_option_index);
+          if (parsedMeta.attempts !== undefined) attempts = Number(parsedMeta.attempts);
+        } catch (e) {}
+      } else if (Array.isArray(row.options) && row.options.length > 0) {
+        options = row.options;
+        correctIndex = Number(row.correct_option_index || 0);
+      }
+
+      // Determine accurate answer status
+      let status = 'PENDING';
+      if (lastAnswerCorrect === true) {
+        status = 'CORRECT';
+      } else if (lastAnswerCorrect === false) {
+        status = 'WRONG';
+      } else {
+        if (row.repetition_level >= 1 && row.last_reviewed_at) {
+          status = 'CORRECT';
+        } else if (row.repetition_level === 0 && row.last_reviewed_at) {
+          status = 'WRONG';
+        } else {
+          status = 'PENDING';
+        }
+      }
+
+      return {
+        id: row.id,
+        courseCode: (row.course_code || 'MED').toUpperCase(),
+        topic: cleanTopic,
+        question: row.question || 'سؤال غير معنون',
+        options: options,
+        correctIndex: correctIndex,
+        explanation: explanation,
+        repetitionLevel: Number(row.repetition_level || 0),
+        isMastered: Boolean(row.is_mastered),
+        nextReviewAt: row.next_review_at,
+        lastReviewedAt: lastAnsweredAt,
+        createdAt: row.created_at,
+        status: status,
+        selectedIndex: selectedIndex,
+        attempts: attempts
+      };
+    });
+
+    window._ALL_QUIZZES = quizzes;
+    filterQuizzesGrid();
+
+    // Also update Home tab KPI card
+    const homeKpiEl = document.getElementById('homeKpiQuizzesTotal');
+    if (homeKpiEl) homeKpiEl.textContent = quizzes.length;
+
+    const homeSubEl = document.getElementById('homeKpiQuizzesSub');
+    if (homeSubEl) {
+      const correctCount = quizzes.filter(q => q.status === 'CORRECT').length;
+      homeSubEl.textContent = `${correctCount} متقن • ${quizzes.length} إجمالي`;
+    }
+  } catch (err) {
+    console.warn('[loadQuizzesPortalData Error]:', err.message);
+    container.innerHTML = `<div class="empty-state" style="grid-column: 1 / -1; color: #f87171;">حدث خطأ أثناء تحميل الأسئلة: ${err.message}</div>`;
+  }
+}
+
+function filterQuizzesGrid() {
+  const container = document.getElementById('quizzesGridContainer');
+  if (!container || !window._ALL_QUIZZES) return;
+
+  const catFilter = document.getElementById('quizFilterCategory')?.value || 'ALL';
+  const statusFilter = document.getElementById('quizFilterStatus')?.value || 'ALL';
+  const searchQuery = (document.getElementById('quizSearchInput')?.value || '').toLowerCase().trim();
+
+  // 1. Filter quizzes
+  const filtered = window._ALL_QUIZZES.filter(q => {
+    if (catFilter !== 'ALL' && q.courseCode !== catFilter) return false;
+    if (statusFilter !== 'ALL' && q.status !== statusFilter) return false;
+    if (searchQuery) {
+      const inQuestion = (q.question || '').toLowerCase().includes(searchQuery);
+      const inTopic = (q.topic || '').toLowerCase().includes(searchQuery);
+      const inExp = (q.explanation || '').toLowerCase().includes(searchQuery);
+      const inOptions = (q.options || []).some(opt => String(opt).toLowerCase().includes(searchQuery));
+      if (!inQuestion && !inTopic && !inExp && !inOptions) return false;
+    }
+    return true;
+  });
+
+  // 2. Update KPI metrics cards based on ALL quizzes (not just filtered)
+  const allList = window._ALL_QUIZZES;
+  const totalCount = allList.length;
+  const correctCount = allList.filter(q => q.status === 'CORRECT').length;
+  const wrongCount = allList.filter(q => q.status === 'WRONG').length;
+  const pendingCount = allList.filter(q => q.status === 'PENDING').length;
+  const answeredTotal = correctCount + wrongCount;
+  const accuracyPct = answeredTotal > 0 ? Math.round((correctCount / answeredTotal) * 100) : 0;
+
+  const elTotal = document.getElementById('quizStatTotal');
+  const elCorrect = document.getElementById('quizStatCorrect');
+  const elWrong = document.getElementById('quizStatWrong');
+  const elPending = document.getElementById('quizStatPending');
+  const elAccuracy = document.getElementById('quizStatAccuracy');
+
+  if (elTotal) elTotal.innerHTML = `${totalCount} <span class="kpi-unit">سؤال</span>`;
+  if (elCorrect) elCorrect.innerHTML = `${correctCount} <span class="kpi-unit">سؤال</span>`;
+  if (elWrong) elWrong.innerHTML = `${wrongCount} <span class="kpi-unit">سؤال</span>`;
+  if (elPending) elPending.innerHTML = `${pendingCount} <span class="kpi-unit">سؤال</span>`;
+  if (elAccuracy) elAccuracy.textContent = `${accuracyPct}%`;
+
+  // 3. Render cards
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state" style="grid-column: 1 / -1; padding: 50px 20px; text-align: center; background: rgba(255,255,255,0.02); border-radius: 14px; border: 1px dashed rgba(255,255,255,0.1);">
+        <span style="font-size: 2.2rem; display: block; margin-bottom: 10px;">🎯</span>
+        <h3 style="color: #fff; margin-bottom: 6px;">لا توجد أسئلة تطابق الفلاتر المحددة</h3>
+        <p style="color: var(--text-secondary); font-size: 0.85rem;">جرّب اختيار مادة أخرى أو تغيير حالة الإجابة، أو مسح كلمة البحث.</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = filtered.map(q => {
+    const meta = getCourseDisplayMeta(q.courseCode);
+
+    // Status Badge Markup
+    let statusBadge = '';
+    if (q.status === 'CORRECT') {
+      statusBadge = `<span style="background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.35); border-radius: 6px; padding: 3px 8px; font-size: 0.76rem; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">🟢 تم الحل بنجاح</span>`;
+    } else if (q.status === 'WRONG') {
+      statusBadge = `<span style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 6px; padding: 3px 8px; font-size: 0.76rem; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">🔴 إجابة خاطئة (مراجعة 24h)</span>`;
+    } else {
+      statusBadge = `<span style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 6px; padding: 3px 8px; font-size: 0.76rem; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">⏳ قيد المراجعة</span>`;
+    }
+
+    // Repetition Level Badge
+    const levelBadge = q.isMastered || q.repetitionLevel >= 6
+      ? `<span style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 6px; padding: 3px 8px; font-size: 0.74rem; font-weight: 800;">👑 متقن 100%</span>`
+      : `<span style="background: rgba(99, 102, 241, 0.15); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 6px; padding: 3px 8px; font-size: 0.74rem; font-weight: 700;">المرحلة ${q.repetitionLevel}/6 🧠</span>`;
+
+    // Options Rendering
+    let optionsHtml = '';
+    if (Array.isArray(q.options) && q.options.length > 0) {
+      optionsHtml = `
+        <div style="margin: 14px 0; display: flex; flex-direction: column; gap: 8px;">
+          ${q.options.map((opt, idx) => {
+            const isCorrect = idx === q.correctIndex;
+            const isSelectedWrong = (q.status === 'WRONG' && q.selectedIndex === idx);
+
+            let optStyle = 'background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); color: #cbd5e1;';
+            let optTag = '';
+
+            if (isCorrect) {
+              optStyle = 'background: rgba(34, 197, 94, 0.12); border: 1px solid rgba(34, 197, 94, 0.5); color: #86efac; font-weight: 700;';
+              optTag = `<span style="background: #22c55e; color: #000; font-size: 0.68rem; font-weight: 800; padding: 1px 6px; border-radius: 4px; margin-right: 6px;">✔ الإجابة الصحيحة</span>`;
+            } else if (isSelectedWrong) {
+              optStyle = 'background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.5); color: #fca5a5; font-weight: 700;';
+              optTag = `<span style="background: #ef4444; color: #fff; font-size: 0.68rem; font-weight: 800; padding: 1px 6px; border-radius: 4px; margin-right: 6px;">✖ اختيارك السابق</span>`;
+            }
+
+            return `
+              <div style="padding: 10px 12px; border-radius: 8px; font-size: 0.85rem; line-height: 1.4; display: flex; align-items: center; justify-content: space-between; ${optStyle}">
+                <span>${opt}</span>
+                ${optTag}
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    // Explanation Box
+    let explanationHtml = '';
+    if (q.explanation && q.explanation.trim()) {
+      explanationHtml = `
+        <div style="background: rgba(245, 158, 11, 0.06); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 8px; padding: 10px 12px; margin-top: 12px; font-size: 0.82rem; color: #fde68a;">
+          <div style="font-weight: 800; margin-bottom: 4px; color: #fbbf24; display: flex; align-items: center; gap: 4px;">
+            <span>💡 تريكة الراوند والشرح النموذجي:</span>
+          </div>
+          <div style="line-height: 1.5;">${q.explanation}</div>
+        </div>
+      `;
+    }
+
+    // Dates
+    let nextDateStr = '—';
+    if (q.nextReviewAt) {
+      try {
+        nextDateStr = new Date(q.nextReviewAt).toLocaleDateString('ar-EG', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      } catch (e) {}
+    }
+
+    let lastDateStr = 'لم يُراجع بعد';
+    if (q.lastReviewedAt) {
+      try {
+        lastDateStr = new Date(q.lastReviewedAt).toLocaleDateString('ar-EG', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      } catch (e) {}
+    }
+
+    return `
+      <div class="split-card" style="display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.7)); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 18px; box-shadow: 0 4px 20px rgba(0,0,0,0.25); transition: transform 0.2s ease, border-color 0.2s ease;">
+        <div>
+          <!-- Header Row -->
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <span style="background: ${meta.bg}; color: ${meta.color}; border: 1px solid ${meta.border}; border-radius: 6px; padding: 3px 8px; font-size: 0.76rem; font-weight: 800;">
+                ${meta.icon} ${meta.name}
+              </span>
+              ${levelBadge}
+            </div>
+            ${statusBadge}
+          </div>
+
+          <!-- Topic Title -->
+          ${q.topic ? `<div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 6px; font-weight: 700;">📌 ${q.topic}</div>` : ''}
+
+          <!-- Question Content -->
+          <h4 style="color: #fff; font-size: 0.98rem; font-weight: 800; line-height: 1.5; margin: 0 0 10px;">
+            ${q.question}
+          </h4>
+
+          <!-- Options -->
+          ${optionsHtml}
+
+          <!-- Explanation -->
+          ${explanationHtml}
+        </div>
+
+        <!-- Footer Meta Row -->
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.08); font-size: 0.75rem; color: var(--text-secondary);">
+          <div>
+            <span>⏰ المراجعة القادمة:</span> <b style="color: #60a5fa;">${nextDateStr}</b>
+          </div>
+          <div>
+            <span>آخر حل:</span> <b style="color: #cbd5e1;">${lastDateStr}</b>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+window.loadQuizzesPortalData = loadQuizzesPortalData;
+window.filterQuizzesGrid = filterQuizzesGrid;
 
 // Immediate initialization if already authenticated
 if (typeof localStorage !== 'undefined' && localStorage.getItem('abdallah_journey_auth_token') === 'authenticated_dr_abdallah_secure_key_2026') {

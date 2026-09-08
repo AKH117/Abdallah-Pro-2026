@@ -70,6 +70,11 @@
           <span>الطب والسكاشن</span>
         </button>
 
+        <button class="nav-item" data-tab="quizzes" data-title="سجل وبنك الأسئلة والكويزات" onclick="toggleMobileSidebar(false)">
+          <span class="nav-icon">🎯</span>
+          <span>سجل الأسئلة والكويزات</span>
+        </button>
+
         <button class="nav-item" data-tab="english" data-title="فلاش كاردز الإنجليزية" onclick="toggleMobileSidebar(false)">
           <span class="nav-icon">🗣️</span>
           <span>فلاش كاردز الإنجليزية</span>
@@ -405,6 +410,16 @@
                 <div class="kpi-trend-pill" id="homeKpiLiquiditySub">خزنة • بنك • محافظ</div>
               </div>
               <div class="kpi-icon-box" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">💰</div>
+            </div>
+
+            <!-- Card 6: Quizzes Hub -->
+            <div class="kpi-card" onclick="switchTabDirect('quizzes')">
+              <div class="kpi-body">
+                <span class="kpi-label">🎯 الكويزات وبنك الأسئلة</span>
+                <div class="kpi-value" id="homeKpiQuizzesTotal">0 <span class="kpi-unit">سؤال</span></div>
+                <div class="kpi-trend-pill" id="homeKpiQuizzesSub" style="color: #c084fc;">إتقان وتكرار متباعد</div>
+              </div>
+              <div class="kpi-icon-box" style="background: rgba(168, 85, 247, 0.15); color: #c084fc;">🎯</div>
             </div>
 
           </div>
@@ -749,6 +764,98 @@
                 </div>
                 <div class="item-desc">📍 المستشفى الجامعي | تنبيه قبلها بـ 60 دقيقة</div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 🎯 TAB: Questions & Quizzes Hub (سجل وبنك الأسئلة التفاعلية) -->
+        <section class="tab-pane" id="tab-quizzes">
+          <div class="section-title-row">
+            <div>
+              <h2>🎯 سجل الأسئلة وبنك الكويزات التفاعلية</h2>
+              <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 4px 0 0;">
+                استعراض شامل لجميع الأسئلة المرسلة إليك (طب، شريعة، بخاري، قرآن، صحابة، انضباط، قيادة) وتتبع الإجابات الصحيحة والخاطئة ومراحل التكرار المتباعد.
+              </p>
+            </div>
+            <div class="actions-group">
+              <button type="button" class="btn-primary" id="btnRefreshQuizzes" onclick="loadQuizzesPortalData(true)">
+                🔄 تحديث الأسئلة
+              </button>
+            </div>
+          </div>
+
+          <!-- Quizzes KPI Statistics Row -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 22px;">
+            <div class="kpi-card" style="border: 1px solid rgba(59, 130, 246, 0.3);">
+              <span class="kpi-label">📊 إجمالي الأسئلة المستلمة</span>
+              <div class="kpi-value" id="quizStatTotal" style="color: #60a5fa;">0 <span class="kpi-unit">سؤال</span></div>
+            </div>
+            <div class="kpi-card" style="border: 1px solid rgba(34, 197, 94, 0.3);">
+              <span class="kpi-label">🟢 إجابات صحيحة (تم الإتقان)</span>
+              <div class="kpi-value" id="quizStatCorrect" style="color: #4ade80;">0 <span class="kpi-unit">سؤال</span></div>
+            </div>
+            <div class="kpi-card" style="border: 1px solid rgba(239, 68, 68, 0.3);">
+              <span class="kpi-label">🔴 إجابات خاطئة (تحت المراجعة)</span>
+              <div class="kpi-value" id="quizStatWrong" style="color: #f87171;">0 <span class="kpi-unit">سؤال</span></div>
+            </div>
+            <div class="kpi-card" style="border: 1px solid rgba(245, 158, 11, 0.3);">
+              <span class="kpi-label">⏳ قيد الانتظار / لم تُجب بعد</span>
+              <div class="kpi-value" id="quizStatPending" style="color: #fbbf24;">0 <span class="kpi-unit">سؤال</span></div>
+            </div>
+            <div class="kpi-card" style="border: 1px solid rgba(168, 85, 247, 0.3);">
+              <span class="kpi-label">🏆 نسبة الإتقان والدقة</span>
+              <div class="kpi-value" id="quizStatAccuracy" style="color: #c084fc;">0%</div>
+            </div>
+          </div>
+
+          <!-- Filter & Search Controls -->
+          <div class="split-card full-width-card" style="margin-bottom: 22px; padding: 16px 20px; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div style="display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end;">
+              <!-- Category Filter -->
+              <div style="flex: 1; min-width: 180px;">
+                <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 6px; font-weight: bold;">
+                  📚 تصنيف المادة / المقرر:
+                </label>
+                <select id="quizFilterCategory" class="form-input" style="width: 100%; padding: 9px 12px; font-size: 0.88rem; background: #0f172a; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff;" onchange="filterQuizzesGrid()">
+                  <option value="ALL">🌟 جميع المواد والمقررات (الكل)</option>
+                  <option value="MED">🩺 الطب البشري والسكاشن الإكلينيكية</option>
+                  <option value="SHARIA">📖 العلم الشرعي والفقه الإسلامي</option>
+                  <option value="BUKHARI">📜 صحيح البخاري ورسائل السلف</option>
+                  <option value="QURAN_ASBAB">📖 القرآن العظيم وأسباب النزول</option>
+                  <option value="SAHABA_SPOTLIGHT">🌟 صحابي اليوم ورجال الدولة</option>
+                  <option value="DISCIPLINE">🧠 علم الأعصاب والانضباط والدوبامين</option>
+                  <option value="STATESMAN">👑 إعداد رجل الدولة وتاريخ الخلفاء</option>
+                  <option value="PURITY">🛡️ وقود النقاء والتميز الإيماني</option>
+                </select>
+              </div>
+
+              <!-- Status Filter -->
+              <div style="flex: 1; min-width: 170px;">
+                <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 6px; font-weight: bold;">
+                  🎯 حالة الإجابة:
+                </label>
+                <select id="quizFilterStatus" class="form-input" style="width: 100%; padding: 9px 12px; font-size: 0.88rem; background: #0f172a; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff;" onchange="filterQuizzesGrid()">
+                  <option value="ALL">⚡ جميع الحالات (الكل)</option>
+                  <option value="CORRECT">🟢 إجابات صحيحة (تم الإتقان)</option>
+                  <option value="WRONG">🔴 إجابات خاطئة (مراجعة عاجلة 24h)</option>
+                  <option value="PENDING">⏳ قيد الانتظار / لم تُجب بعد</option>
+                </select>
+              </div>
+
+              <!-- Search Input -->
+              <div style="flex: 2; min-width: 240px;">
+                <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 6px; font-weight: bold;">
+                  🔍 بحث فوري في نص السؤال أو الشرح:
+                </label>
+                <input type="text" id="quizSearchInput" class="form-input" placeholder="اكتب للبحث في نص السؤال، الموضوع، أو الشرح..." style="width: 100%; padding: 9px 14px; font-size: 0.88rem; background: #0f172a; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff;" oninput="filterQuizzesGrid()" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Quizzes Grid Container -->
+          <div id="quizzesGridContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px;">
+            <div class="empty-state" style="grid-column: 1 / -1; padding: 40px; text-align: center;">
+              ⏳ جاري تحميل سجل الأسئلة والكويزات من السيرفر...
             </div>
           </div>
         </section>
