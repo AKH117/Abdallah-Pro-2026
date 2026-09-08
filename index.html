@@ -862,17 +862,111 @@
 
         <!-- 🗣️ TAB 2: English Spaced Flashcards Hub -->
         <section class="tab-pane" id="tab-english">
-          <div class="section-title-row">
-            <h2>🗣️ بنك الكلمات والجمل الإنجليزية بالتكرار المتباعد (Spaced Flashcards)</h2>
-            <div class="actions-group">
-              <span class="badge-emerald">Scientific Spaced Repetition (Anki / SM-2)</span>
+          <div class="section-title-row" style="margin-bottom: 20px;">
+            <div>
+              <h2 style="margin: 0; font-size: 1.45rem;">🗣️ بنك الطلاقة والجمل الإنجليزية بالتكرار المتباعد (Spaced Flashcards)</h2>
+              <p style="margin: 4px 0 0; color: var(--text-secondary); font-size: 0.85rem;">
+                جميع الجمل والمصطلحات والخواطر المستخرجة من تسجيلاتك مع ترجمتها المصرية ومنحنى التثبيت الذكي 🇬🇧✨
+              </p>
+            </div>
+            <div class="actions-group" style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <span class="badge-emerald" style="padding: 6px 12px; font-size: 0.82rem;">منهجية Anki / SM-2 العلمية</span>
+              <button class="btn btn-secondary" onclick="renderEnglishSection()" style="padding: 6px 14px; font-size: 0.82rem; border-radius: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; cursor: pointer;">
+                🔄 تحديث البنك
+              </button>
             </div>
           </div>
 
-          <div class="skills-grid" id="englishFlashcardsGrid">
-            <div class="empty-state full-width-card">
-              ✨ أرسل أي كلمة أو جملة إنجليزية للبوت (مثال: <i>"احفظ كلمة Dyspnea on exertion"</i> أو <i>"احفظ جملة Out of the blue"</i>)<br>
-              سيترجمها فوراً للعامية المصرية ويجدولها على فترات علمية (12h ➔ 1d ➔ 3d ➔ 7d ➔ 14d ➔ 30d) حتى الحفظ المتقن 100%!
+          <!-- KPI Metrics Row -->
+          <div class="kpi-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 22px;">
+            <div class="kpi-card" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 12px; padding: 14px 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span class="kpi-label" style="color: var(--text-secondary); font-size: 0.82rem; font-weight: bold;">🗣️ إجمالي الجمل والكلمات</span>
+                <span style="font-size: 1.2rem;">📚</span>
+              </div>
+              <div class="kpi-value" id="totalEngCards" style="font-size: 1.6rem; font-weight: 800; color: #fff;">
+                0 <span class="stat-unit" style="font-size: 0.85rem; color: var(--text-secondary); font-weight: normal;">جملة</span>
+              </div>
+              <div style="font-size: 0.75rem; color: #38bdf8; margin-top: 4px;" id="totalEngSub">توثيق واستخراج شامل</div>
+            </div>
+
+            <div class="kpi-card" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 14px 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span class="kpi-label" style="color: var(--text-secondary); font-size: 0.82rem; font-weight: bold;">👑 متقنة بالكامل (100%)</span>
+                <span style="font-size: 1.2rem;">🎯</span>
+              </div>
+              <div class="kpi-value" id="masteredEngCards" style="font-size: 1.6rem; font-weight: 800; color: #10b981;">
+                0 <span class="stat-unit" style="font-size: 0.85rem; color: var(--text-secondary); font-weight: normal;">جملة</span>
+              </div>
+              <div style="font-size: 0.75rem; color: #10b981; margin-top: 4px;">مستوى 6/6 (راسخة بالذاكرة)</div>
+            </div>
+
+            <div class="kpi-card" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 12px; padding: 14px 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span class="kpi-label" style="color: var(--text-secondary); font-size: 0.82rem; font-weight: bold;">⏳ مستحقة للمراجعة الآن</span>
+                <span style="font-size: 1.2rem;">⏰</span>
+              </div>
+              <div class="kpi-value" id="dueEngCards" style="font-size: 1.6rem; font-weight: 800; color: #f59e0b;">
+                0 <span class="stat-unit" style="font-size: 0.85rem; color: var(--text-secondary); font-weight: normal;">جملة</span>
+              </div>
+              <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 4px;">جاهزة للتثبيت الفوري</div>
+            </div>
+
+            <div class="kpi-card" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(139, 92, 246, 0.25); border-radius: 12px; padding: 14px 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span class="kpi-label" style="color: var(--text-secondary); font-size: 0.82rem; font-weight: bold;">🧠 قيد التثبيت والتدرج</span>
+                <span style="font-size: 1.2rem;">📈</span>
+              </div>
+              <div class="kpi-value" id="inProgressEngCards" style="font-size: 1.6rem; font-weight: 800; color: #a78bfa;">
+                0 <span class="stat-unit" style="font-size: 0.85rem; color: var(--text-secondary); font-weight: normal;">جملة</span>
+              </div>
+              <div style="font-size: 0.75rem; color: #a78bfa; margin-top: 4px;">مستويات (1 إلى 5)</div>
+            </div>
+          </div>
+
+          <!-- Interactive Filters & Instant Search Bar -->
+          <div class="filter-card full-width-card" style="margin-bottom: 20px; background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px;">
+            <div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end;">
+              <!-- Category Filter -->
+              <div style="flex: 1; min-width: 180px;">
+                <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 6px; font-weight: bold;">
+                  🏷️ تصنيف الجملة:
+                </label>
+                <select id="engCategoryFilter" class="form-select" style="width: 100%; padding: 9px 12px; font-size: 0.88rem; background: #0f172a; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff;" onchange="filterEnglishFlashcards()">
+                  <option value="ALL">✨ كافة التصنيفات والجلسات</option>
+                  <option value="conversation">🗣️ محادثات وطلاقة لسان (Conversation)</option>
+                  <option value="idiom">💬 تعبيرات ومصطلحات دارجة (Idioms)</option>
+                  <option value="vocabulary">📚 مفردات وتراكيب تخصصية (Vocabulary)</option>
+                </select>
+              </div>
+
+              <!-- Status / Mastery Filter -->
+              <div style="flex: 1; min-width: 180px;">
+                <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 6px; font-weight: bold;">
+                  📊 حالة التكرار المتباعد:
+                </label>
+                <select id="engStatusFilter" class="form-select" style="width: 100%; padding: 9px 12px; font-size: 0.88rem; background: #0f172a; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff;" onchange="filterEnglishFlashcards()">
+                  <option value="ALL">📌 جميع الكروت</option>
+                  <option value="DUE">⏳ مستحقة للمراجعة الآن</option>
+                  <option value="IN_PROGRESS">🟡 قيد التثبيت (مستويات 0-5)</option>
+                  <option value="MASTERED">🟢 متقنة بالكامل (100%)</option>
+                </select>
+              </div>
+
+              <!-- Search Input -->
+              <div style="flex: 2; min-width: 240px;">
+                <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 6px; font-weight: bold;">
+                  🔍 بحث فوري في نص الجملة أو المعنى المصري:
+                </label>
+                <input type="text" id="engSearchInput" class="form-input" placeholder="اكتب للبحث في الجملة الإنجليزية أو الترجمة المصرية..." style="width: 100%; padding: 9px 14px; font-size: 0.88rem; background: #0f172a; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff;" oninput="filterEnglishFlashcards()" />
+              </div>
+            </div>
+          </div>
+
+          <!-- English Flashcards Grid Container -->
+          <div class="skills-grid" id="englishFlashcardsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px;">
+            <div class="empty-state full-width-card" style="grid-column: 1 / -1; padding: 40px; text-align: center;">
+              ⏳ جاري تحميل بنك فلاش كاردز الإنجليزية...
             </div>
           </div>
         </section>

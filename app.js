@@ -617,6 +617,9 @@ function initTabs() {
       if (tab.dataset.tab === 'quizzes' && typeof loadQuizzesPortalData === 'function') {
         loadQuizzesPortalData();
       }
+      if (tab.dataset.tab === 'english' && typeof renderEnglishSection === 'function') {
+        renderEnglishSection();
+      }
 
     });
 
@@ -666,6 +669,9 @@ window.switchTabDirect = function(tabName) {
 
   if (tabName === 'quizzes' && typeof loadQuizzesPortalData === 'function') {
     loadQuizzesPortalData();
+  }
+  if (tabName === 'english' && typeof renderEnglishSection === 'function') {
+    renderEnglishSection();
   }
 
   if (typeof window.toggleMobileSidebar === 'function') {
@@ -3067,77 +3073,311 @@ async function renderAcademicSection() {
 
 // 🗣️ 2. English Spaced Flashcards Hub
 
+// 🗣️ 2. English Spaced Flashcards Hub
 async function renderEnglishSection() {
-
-  const container = document.getElementById('englishFlashcardsGrid');
-
   const totalCardsEl = document.getElementById('totalEngCards');
-
   const masteredCardsEl = document.getElementById('masteredEngCards');
+  const dueCardsEl = document.getElementById('dueEngCards');
+  const inProgressCardsEl = document.getElementById('inProgressEngCards');
+  const totalSubEl = document.getElementById('totalEngSub');
 
   try {
-
     const { data: cards } = await userQuery('english_spaced_flashcards').order('created_at', { ascending: false });
+    window._cachedEngCards = cards || [];
 
-    if (cards && cards.length > 0) {
+    const nowIso = new Date().toISOString();
+    const totalCount = window._cachedEngCards.length;
+    let masteredCount = 0;
+    let dueCount = 0;
+    let inProgressCount = 0;
 
-      let masteredCount = cards.filter(c => c.is_mastered).length;
-
-      if (totalCardsEl) totalCardsEl.innerHTML = `${cards.length} <span class="stat-unit">كلمات</span>`;
-
-      if (masteredCardsEl) masteredCardsEl.textContent = `${masteredCount} كلمات متقنة بالكامل`;
-
-      if (container) {
-
-        let html = '';
-
-        cards.forEach(c => {
-
-          const nextReview = c.next_review_at ? c.next_review_at.slice(0, 16).replace('T', ' ') : 'قريباً';
-
-          html += `
-
-            <div class="skill-card" style="border-color: rgba(56, 189, 248, 0.25);">
-
-              <div class="item-top-row">
-
-                <span class="skill-title" style="font-size: 1.25rem;">🌟 ${c.term_or_sentence}</span>
-
-                <span class="task-status-badge ${c.is_mastered ? 'status-done' : 'status-pending'}">مستوى: ${c.repetition_level || 0}/6</span>
-
-              </div>
-
-              <div style="font-weight: 800; color: #38bdf8; font-size: 1.15rem; margin: 8px 0;">🇪🇬 ${c.egyptian_translation}</div>
-
-              ${c.example_sentence ? `<div class="skill-takeaways">📝 <i>"${c.example_sentence}"</i></div>` : ''}
-
-              <div class="thought-footer" style="margin-top: 10px;">
-
-                <span class="thought-cat">🏷️ ${c.usage_context || 'عام'}</span>
-
-                <span class="thought-date">⏳ أضيف: ${formatRelativeDate(null, c.created_at)} • المراجعة: ${nextReview}</span>
-
-              </div>
-
-            </div>
-
-          `;
-
-        });
-
-        container.innerHTML = html;
-
+    window._cachedEngCards.forEach(c => {
+      if (c.is_mastered || (c.repetition_level && c.repetition_level >= 6)) {
+        masteredCount++;
+      } else if (!c.next_review_at || c.next_review_at <= nowIso) {
+        dueCount++;
+      } else {
+        inProgressCount++;
       }
+    });
 
-    }
+    if (totalCardsEl) totalCardsEl.innerHTML = `${totalCount} <span class="stat-unit">جملة</span>`;
+    if (masteredCardsEl) masteredCardsEl.innerHTML = `${masteredCount} <span class="stat-unit">جملة</span>`;
+    if (dueCardsEl) dueCardsEl.innerHTML = `${dueCount} <span class="stat-unit">جملة</span>`;
+    if (inProgressCardsEl) inProgressCardsEl.innerHTML = `${inProgressCount} <span class="stat-unit">جملة</span>`;
+    if (totalSubEl) totalSubEl.textContent = `${totalCount} كارت موثق ومستخرج`;
 
+    filterEnglishFlashcards();
   } catch (err) {
-
     console.warn('renderEnglishSection error:', err);
+  }
+}
 
+function filterEnglishFlashcards() {
+  const container = document.getElementById('englishFlashcardsGrid');
+  if (!container) return;
+
+  const catFilter = document.getElementById('engCategoryFilter')?.value || 'ALL';
+  const statusFilter = document.getElementById('engStatusFilter')?.value || 'ALL';
+  const searchInput = (document.getElementById('engSearchInput')?.value || '').toLowerCase().trim();
+  const nowIso = new Date().toISOString();
+
+  let list = window._cachedEngCards || [];
+
+  if (catFilter !== 'ALL') {
+    list = list.filter(c => (c.usage_context || '').toLowerCase().includes(catFilter.toLowerCase()));
   }
 
+  if (statusFilter !== 'ALL') {
+    if (statusFilter === 'MASTERED') {
+      list = list.filter(c => c.is_mastered || (c.repetition_level && c.repetition_level >= 6));
+    } else if (statusFilter === 'DUE') {
+      list = list.filter(c => !c.is_mastered && (c.repetition_level || 0) < 6 && (!c.next_review_at || c.next_review_at <= nowIso));
+    } else if (statusFilter === 'IN_PROGRESS') {
+      list = list.filter(c => !c.is_mastered && (c.repetition_level || 0) < 6);
+    }
+  }
+
+  if (searchInput) {
+    list = list.filter(c => {
+      const term = (c.term_or_sentence || '').toLowerCase();
+      const trans = (c.egyptian_translation || '').toLowerCase();
+      const ex = (c.example_sentence || '').toLowerCase();
+      const ctx = (c.usage_context || '').toLowerCase();
+      return term.includes(searchInput) || trans.includes(searchInput) || ex.includes(searchInput) || ctx.includes(searchInput);
+    });
+  }
+
+  if (list.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state full-width-card" style="grid-column: 1 / -1; padding: 40px 20px; text-align: center; background: rgba(15, 23, 42, 0.6); border: 1px dashed rgba(255,255,255,0.15); border-radius: 12px;">
+        🔍 لا توجد كروت أو جمل مطابقة للبحث أو الفلتر المختار.<br>
+        <button class="btn btn-secondary" style="margin-top: 12px; padding: 6px 14px; font-size: 0.85rem; border-radius: 8px;" onclick="resetEngFilters()">إلغاء الفلاتر وعرض الكل</button>
+      </div>
+    `;
+    return;
+  }
+
+  let html = '';
+  list.forEach(c => {
+    const isMastered = Boolean(c.is_mastered || (c.repetition_level && c.repetition_level >= 6));
+    const lvl = Number(c.repetition_level || 0);
+    const isDue = !isMastered && (!c.next_review_at || c.next_review_at <= nowIso);
+    
+    let catLabel = '🗣️ محادثة وطلاقة';
+    let catBg = 'rgba(56, 189, 248, 0.15)';
+    let catColor = '#38bdf8';
+    const rawCat = (c.usage_context || '').toLowerCase();
+    if (rawCat.includes('idiom') || rawCat.includes('تعبير')) {
+      catLabel = '💬 تعبير دارج (Idiom)';
+      catBg = 'rgba(245, 158, 11, 0.15)';
+      catColor = '#fbbf24';
+    } else if (rawCat.includes('vocab') || rawCat.includes('مصطلح') || rawCat.includes('cardio') || rawCat.includes('term')) {
+      catLabel = '📚 مصطلح / تراكيب';
+      catBg = 'rgba(168, 85, 247, 0.15)';
+      catColor = '#c084fc';
+    }
+
+    let dotsHtml = '';
+    for (let d = 1; d <= 6; d++) {
+      if (d <= lvl) {
+        dotsHtml += `<span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: ${isMastered ? '#10b981' : '#38bdf8'}; margin: 0 1.5px;"></span>`;
+      } else {
+        dotsHtml += `<span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.15); margin: 0 1.5px;"></span>`;
+      }
+    }
+
+    const nextReviewStr = c.next_review_at ? formatRelativeNextReview(c.next_review_at) : 'جاهز للمراجعة';
+    const escapedTerm = (c.term_or_sentence || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+    html += `
+      <div class="skill-card" style="display: flex; flex-direction: column; justify-content: space-between; border: 1px solid ${isMastered ? 'rgba(16, 185, 129, 0.35)' : isDue ? 'rgba(245, 158, 11, 0.45)' : 'rgba(56, 189, 248, 0.25)'}; background: linear-gradient(135deg, rgba(15, 23, 42, 0.85), ${isMastered ? 'rgba(16, 185, 129, 0.05)' : isDue ? 'rgba(245, 158, 11, 0.05)' : 'rgba(56, 189, 248, 0.04)'}); border-radius: 12px; padding: 16px;">
+        <div>
+          <!-- Top Row: Category & Status Badge -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; flex-wrap: wrap;">
+            <span style="font-size: 0.76rem; font-weight: bold; padding: 3px 8px; border-radius: 6px; background: ${catBg}; color: ${catColor};">
+              ${catLabel}
+            </span>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 0.75rem; color: var(--text-secondary);">مستوى ${lvl}/6</span>
+              <div style="display: inline-flex; align-items: center;">${dotsHtml}</div>
+              ${isMastered ? '<span class="badge-emerald" style="padding: 2px 6px; font-size: 0.72rem;">👑 متقن 100%</span>' : isDue ? '<span style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; font-weight: bold;">⏳ مستحق</span>' : ''}
+            </div>
+          </div>
+
+          <!-- English Sentence with Speaker Icon -->
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 10px;">
+            <div style="font-size: 1.15rem; font-weight: 700; color: #f8fafc; line-height: 1.45; direction: ltr; text-align: left; flex: 1;">
+              ${c.term_or_sentence}
+            </div>
+            <button onclick="speakEnglishSentence('${escapedTerm}')" title="استمع للنطق الصحيح" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: #38bdf8; cursor: pointer; flex-shrink: 0;">
+              🔊
+            </button>
+          </div>
+
+          <!-- Egyptian Arabic Translation -->
+          <div style="background: rgba(56, 189, 248, 0.08); border-right: 3px solid #38bdf8; border-radius: 4px; padding: 8px 12px; margin-bottom: 10px; font-size: 0.98rem; font-weight: bold; color: #38bdf8;">
+            🇪🇬 ${c.egyptian_translation || 'ترجمة مصرية'}
+          </div>
+
+          <!-- Example Sentence if any -->
+          ${c.example_sentence ? `
+            <div style="font-size: 0.82rem; color: var(--text-secondary); direction: ltr; text-align: left; margin-bottom: 10px; font-style: italic; background: rgba(0,0,0,0.2); padding: 6px 10px; border-radius: 6px;">
+              📝 "${c.example_sentence}"
+            </div>
+          ` : ''}
+        </div>
+
+        <!-- Footer Row: Review Controls & Next Review Date -->
+        <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; margin-top: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 10px;">
+            <span>⏳ المراجعة: <strong style="color: ${isDue ? '#f59e0b' : '#94a3b8'};">${nextReviewStr}</strong></span>
+            <span>📅 أضيف: ${formatRelativeDate(null, c.created_at)}</span>
+          </div>
+
+          <!-- Interactive Level Up / Reset / Master Buttons -->
+          <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+            <button onclick="levelUpEnglishCard('${c.id}', ${lvl})" title="حفظتها وانتقل للمستوى التالي" class="btn" style="flex: 2; min-width: 110px; padding: 6px 10px; font-size: 0.78rem; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #10b981; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
+              🟢 حفظتها (+1 Level)
+            </button>
+            <button onclick="resetEnglishCard('${c.id}')" title="نسيتها وأحتاج مراجعتها قريباً" class="btn" style="flex: 1; min-width: 80px; padding: 6px 10px; font-size: 0.78rem; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); color: #f87171; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
+              🔴 نسيتها
+            </button>
+            <button onclick="masterEnglishCard('${c.id}')" title="أتقنها 100% ولا أريد تكرارها" class="btn" style="padding: 6px 10px; font-size: 0.78rem; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); color: #fbbf24; border-radius: 6px; cursor: pointer;">
+              👑 متقن
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
 }
+
+function resetEngFilters() {
+  const c = document.getElementById('engCategoryFilter');
+  const s = document.getElementById('engStatusFilter');
+  const q = document.getElementById('engSearchInput');
+  if (c) c.value = 'ALL';
+  if (s) s.value = 'ALL';
+  if (q) q.value = '';
+  filterEnglishFlashcards();
+}
+
+function speakEnglishSentence(text) {
+  if (!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'en-US';
+  utterance.rate = 0.95;
+  window.speechSynthesis.speak(utterance);
+}
+
+function formatRelativeNextReview(isoStr) {
+  if (!isoStr) return 'جاهز للمراجعة';
+  const target = new Date(isoStr).getTime();
+  const now = Date.now();
+  const diffHours = Math.round((target - now) / 3600000);
+  if (diffHours <= 0) return 'مستحق الآن ⚡';
+  if (diffHours < 24) return `بعد ${diffHours} ساعة`;
+  const diffDays = Math.round(diffHours / 24);
+  if (diffDays === 1) return 'غداً';
+  if (diffDays === 2) return 'بعد يومين';
+  return `بعد ${diffDays} أيام`;
+}
+
+async function levelUpEnglishCard(cardId, curLvl) {
+  const nextLevel = Math.min(6, (Number(curLvl) || 0) + 1);
+  const isMastered = (nextLevel >= 6);
+  let intervalHours = 120; // 5 days
+  switch (nextLevel) {
+    case 1: intervalHours = 120; break;
+    case 2: intervalHours = 288; break; // 12 days
+    case 3: intervalHours = 600; break; // 25 days
+    case 4: intervalHours = 1200; break; // 50 days
+    case 5: intervalHours = 2160; break; // 90 days
+    case 6: intervalHours = 4320; break; // 180 days
+  }
+  const nextDate = new Date(Date.now() + intervalHours * 3600 * 1000).toISOString();
+  
+  if (window._cachedEngCards) {
+    const card = window._cachedEngCards.find(c => c.id === cardId);
+    if (card) {
+      card.repetition_level = nextLevel;
+      card.is_mastered = isMastered;
+      card.next_review_at = nextDate;
+      card.last_reviewed_at = new Date().toISOString();
+    }
+  }
+  filterEnglishFlashcards();
+
+  try {
+    await db.from('english_spaced_flashcards').update({
+      repetition_level: nextLevel,
+      next_review_at: nextDate,
+      is_mastered: isMastered,
+      last_reviewed_at: new Date().toISOString()
+    }).eq('id', cardId);
+  } catch (err) {
+    console.warn('levelUpEnglishCard error:', err);
+  }
+}
+
+async function resetEnglishCard(cardId) {
+  const nextDate = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
+  if (window._cachedEngCards) {
+    const card = window._cachedEngCards.find(c => c.id === cardId);
+    if (card) {
+      card.repetition_level = 0;
+      card.is_mastered = false;
+      card.next_review_at = nextDate;
+      card.last_reviewed_at = new Date().toISOString();
+    }
+  }
+  filterEnglishFlashcards();
+
+  try {
+    await db.from('english_spaced_flashcards').update({
+      repetition_level: 0,
+      next_review_at: nextDate,
+      is_mastered: false,
+      last_reviewed_at: new Date().toISOString()
+    }).eq('id', cardId);
+  } catch (err) {
+    console.warn('resetEnglishCard error:', err);
+  }
+}
+
+async function masterEnglishCard(cardId) {
+  if (window._cachedEngCards) {
+    const card = window._cachedEngCards.find(c => c.id === cardId);
+    if (card) {
+      card.repetition_level = 6;
+      card.is_mastered = true;
+      card.last_reviewed_at = new Date().toISOString();
+    }
+  }
+  filterEnglishFlashcards();
+
+  try {
+    await db.from('english_spaced_flashcards').update({
+      repetition_level: 6,
+      is_mastered: true,
+      last_reviewed_at: new Date().toISOString()
+    }).eq('id', cardId);
+  } catch (err) {
+    console.warn('masterEnglishCard error:', err);
+  }
+}
+
+window.renderEnglishSection = renderEnglishSection;
+window.filterEnglishFlashcards = filterEnglishFlashcards;
+window.resetEngFilters = resetEngFilters;
+window.speakEnglishSentence = speakEnglishSentence;
+window.levelUpEnglishCard = levelUpEnglishCard;
+window.resetEnglishCard = resetEnglishCard;
+window.masterEnglishCard = masterEnglishCard;
 
 // 📖 3. Quran Logs
 
