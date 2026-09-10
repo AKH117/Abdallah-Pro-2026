@@ -1,0 +1,17 @@
+name: 24/7 Automated Life Scheduler & Keep-Alive Dispatcher
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  keep_alive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Ping Render Webhook & Scheduler API
+        run: |
+          echo "⏰ Pinging Render Server and Scheduler Cycle..."
+          curl -s -f -m 30 "https://abdallah-pro.onrender.com/api/cron" || curl -s -m 30 "https://abdallah-pro.onrender.com/" || true
+          echo "✅ Keep-alive and scheduler ping completed."

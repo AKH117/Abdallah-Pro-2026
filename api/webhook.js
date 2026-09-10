@@ -131,6 +131,33 @@ if (process.env.PORT) {
 
         const parsedUrl = url.parse(req.url, true);
         req.query = parsedUrl.query || {};
+        const pathname = parsedUrl.pathname || '/';
+
+        // ⏰ Route /api/cron: run scheduler cycle & return JSON
+        if (pathname === '/api/cron') {
+          try {
+            const { runSchedulerCycle } = await import('../lib/scheduler.js');
+            await runSchedulerCycle(bot);
+            return res.status(200).json({
+              ok: true,
+              message: 'تم تشغيل دورة التذكيرات والمراجعة التلقائية بنجاح',
+              timestamp: new Date().toISOString()
+            });
+          } catch (err) {
+            console.error('[HTTP Cron Error]:', err.message);
+            return res.status(500).json({ ok: false, error: err.message });
+          }
+        }
+
+        // 📱 Route /api/dashboard_data
+        if (pathname === '/api/dashboard_data') {
+          try {
+            const { default: dashHandler } = await import('./dashboard_data.js');
+            return await dashHandler(req, res);
+          } catch (e) {
+            return res.status(500).json({ ok: false, error: e.message });
+          }
+        }
 
         if (req.method === 'POST') {
           let body = '';
