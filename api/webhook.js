@@ -159,6 +159,15 @@ if (process.env.PORT) {
           }
         }
 
+        // 🚀 Route /api/version: check deployed version
+        if (pathname === '/api/version') {
+          return res.status(200).json({
+            ok: true,
+            version: '3.0.0-StrictClean-Medical-English-WorshipOnly',
+            timestamp: new Date().toISOString()
+          });
+        }
+
         if (req.method === 'POST') {
           let body = '';
           req.on('data', chunk => { body += chunk; });
