@@ -54,7 +54,9 @@ export default async function handler(req, res) {
 
     if (req.query.set_webhook === 'true' && bot) {
       try {
-        await bot.telegram.setWebhook(webhookUrl);
+        await bot.telegram.setWebhook(webhookUrl, {
+          allowed_updates: ['message', 'edited_message', 'callback_query', 'poll', 'poll_answer']
+        });
         await bot.telegram.setChatMenuButton({
           menu_button: {
             type: 'web_app',
@@ -185,8 +187,21 @@ if (process.env.PORT) {
       });
 
       const port = process.env.PORT || 3000;
-      server.listen(port, '0.0.0.0', () => {
+      server.listen(port, '0.0.0.0', async () => {
         console.log(`🚀 Abdullah's Journey OS Server listening on 0.0.0.0:${port}`);
+        if (bot) {
+          try {
+            const current = await bot.telegram.getWebhookInfo();
+            if (current.url) {
+              await bot.telegram.setWebhook(current.url, {
+                allowed_updates: ['message', 'edited_message', 'callback_query', 'poll', 'poll_answer']
+              });
+              console.log(`📡 [Webhook Verified] allowed_updates synced with poll_answer to ${current.url}`);
+            }
+          } catch (whErr) {
+            console.warn('[Webhook Init Warn]:', whErr.message);
+          }
+        }
       });
 
       // ⏰ Start Autonomous Background Scheduler Daemon (Prayers, Azkar, Quizzes, Spaced Repetition)
