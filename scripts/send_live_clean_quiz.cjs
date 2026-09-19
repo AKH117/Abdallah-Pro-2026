@@ -90,7 +90,6 @@ async function sendLiveDemo() {
   };
 
   await supabase.from('medical_spaced_quizzes').update({
-    telegram_poll_id: pollMsg.poll.id,
     doctor_pearl: `<<<QUIZ_META_START>>>${JSON.stringify(metaObj)}<<<QUIZ_META_END>>> ${explanation}`.trim(),
     last_reviewed_at: new Date().toISOString()
   }).eq('id', quiz.id);
