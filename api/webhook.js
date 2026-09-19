@@ -64,12 +64,12 @@ export default async function handler(req, res) {
         await bot.telegram.setWebhook(webhookUrl, {
           allowed_updates: ['message', 'edited_message', 'callback_query', 'poll', 'poll_answer']
         });
-        await bot.telegram.setChatMenuButton({
-          menuButton: {
+        await bot.telegram.callApi('setChatMenuButton', {
+          menu_button: JSON.stringify({
             type: 'web_app',
             text: '📱 لوحة التحكم',
             web_app: { url: `https://${host}/` }
-          }
+          })
         }).catch(() => {});
         return res.status(200).json({
           status: 'success',
