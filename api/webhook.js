@@ -68,7 +68,7 @@ export default async function handler(req, res) {
           menu_button: JSON.stringify({
             type: 'web_app',
             text: '📱 لوحة التحكم',
-            web_app: { url: 'https://abdallah-pro.onrender.com/' }
+            web_app: { url: 'https://akh117.github.io/Abdallah-Pro-2026/' }
           })
         }).catch(() => {});
         return res.status(200).json({

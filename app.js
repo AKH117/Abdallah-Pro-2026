@@ -620,6 +620,9 @@ function initTabs() {
       if (tab.dataset.tab === 'english' && typeof renderEnglishSection === 'function') {
         renderEnglishSection();
       }
+      if ((tab.dataset.tab === 'schedule' || tab.dataset.tab === 'home') && typeof renderScheduleSection === 'function') {
+        renderScheduleSection();
+      }
 
     });
 
@@ -672,6 +675,9 @@ window.switchTabDirect = function(tabName) {
   }
   if (tabName === 'english' && typeof renderEnglishSection === 'function') {
     renderEnglishSection();
+  }
+  if ((tabName === 'schedule' || tabName === 'home') && typeof renderScheduleSection === 'function') {
+    renderScheduleSection();
   }
 
   if (typeof window.toggleMobileSidebar === 'function') {
@@ -3952,6 +3958,7 @@ async function initDashboard() {
     renderWishlistKanban(),
     renderAcademicPdfVault(),
     renderAcademicSection(),
+    renderScheduleSection(),
     renderEnglishSection(),
     renderQuranSection(),
     renderFastingAndSunnah(),
@@ -5737,6 +5744,513 @@ function filterQuizzesGrid() {
 window.loadQuizzesPortalData = loadQuizzesPortalData;
 window.filterQuizzesGrid = filterQuizzesGrid;
 
+// ============================================================================
+// 📅 20. قسم جدولي ومواعيد السكاشن الحية • د. عبدالله (جروب 7 - Block 7)
+// ============================================================================
+
+const G7_WEEKLY_SCHEDULE = {
+  'أحد': {
+    isCollegeDay: true,
+    dayName: 'الأحد',
+    sessions: [
+      { id: 'sun_1', time: '08:45 - 10:25 ص', name: 'CAD Intro to Cardiology (مقدمة القلب)', type: 'محاضرة مدرج', loc: 'مدرج الكلية', code: 'CAD' },
+      { id: 'sun_2', time: '10:30 - 12:10 م', name: 'CAD Normal ECG (رسم القلب الطبيعي)', type: 'محاضرة مدرج', loc: 'مدرج الكلية', code: 'CAD' },
+      { id: 'sun_3', time: '12:30 - 02:10 م', name: 'SGD CAD (مناقشة حالات سريرية)', type: 'سكشن تفاعلي (SGD)', loc: 'المستشفى — قاعة 14', code: 'CAD' },
+      { id: 'sun_4', time: '02:15 - 03:55 م', name: 'SGT CAD (تدريس إكلينيكي)', type: 'سكشن كلينيكال (SGT)', loc: 'الأقسام والعيادات الخارجية', code: 'CAD' }
+    ],
+    studyTarget: 'مقدمة الكارديولوجي وفسيولوجيا ورسم القلب الطبيعي (Normal ECG)'
+  },
+  'إثنين': {
+    isCollegeDay: false,
+    dayName: 'الإثنين',
+    sessions: [
+      { id: 'mon_1', time: '08:45 - 12:10 م', name: 'مراجعة ذاتية واستذكار حر لموديول القلب', type: 'مذاكرة حرة', loc: 'المكتبة / المنزل', code: 'CAD' },
+      { id: 'mon_2', time: '12:30 - 02:10 م', name: 'Open Lab معمل المهارات المفتوح', type: 'معمل مهارات (Open Lab)', loc: 'المستشفى — قاعة 1', code: 'CAD' },
+      { id: 'mon_3', time: '02:15 - 03:55 م', name: 'جلسة مذاكرة عميقة وحل كويزات الكارديو', type: 'مذاكرة وتطبيق', loc: 'المنزل', code: 'CAD' }
+    ],
+    studyTarget: 'رسم القلب وحساب المحاور والمسافات (Normal ECG Criteria)'
+  },
+  'ثلاثاء': {
+    isCollegeDay: true,
+    dayName: 'الثلاثاء',
+    sessions: [
+      { id: 'tue_1', time: '08:45 - 10:25 ص', name: 'CAD Mitral Valve Diseases (أمراض الصمام الميترالي)', type: 'محاضرة مدرج', loc: 'مدرج الكلية', code: 'CAD' },
+      { id: 'tue_2', time: '10:30 - 12:10 م', name: 'PED Growth & Assessment (تقييم نمو الأطفال)', type: 'محاضرة مدرج', loc: 'مدرج الكلية', code: 'PED' },
+      { id: 'tue_3', time: '12:30 - 02:10 م', name: 'Alex CAD (سكشن الإسكندرية)', type: 'سكشن إكلينيكي', loc: 'المستشفى — قاعة 15', code: 'CAD' },
+      { id: 'tue_4', time: '02:15 - 03:55 م', name: 'Clinical CAD (كلينيكال باطنة وقلب)', type: 'سكشن كلينيكال (Clinical)', loc: 'المستشفى — قاعة 10', code: 'CAD' }
+    ],
+    studyTarget: 'أمراض الصمام الميترالي (Mitral Stenosis & Regurgitation)'
+  },
+  'أربعاء': {
+    isCollegeDay: true,
+    dayName: 'الأربعاء',
+    sessions: [
+      { id: 'wed_1', time: '08:45 - 10:25 ص', name: 'PED Disorders of Physical Growth (اضطرابات النمو)', type: 'محاضرة مدرج', loc: 'مدرج الكلية', code: 'PED' },
+      { id: 'wed_2', time: '10:30 - 12:10 م', name: 'CAD Aortic Valve Diseases (أمراض الصمام الأورطي)', type: 'محاضرة مدرج', loc: 'مدرج الكلية', code: 'CAD' },
+      { id: 'wed_3', time: '12:30 - 02:10 م', name: 'Skill Lab 7 (معمل مهارات مجموعة 7)', type: 'معمل مهارات (Skill Lab)', loc: 'المستشفى — قاعة 4', code: 'CAD' },
+      { id: 'wed_4', time: '02:15 - 03:55 م', name: 'Cases 7&8 (مناقشة حالات سريرية)', type: 'مناقشة حالات (Cases)', loc: 'مبنى 3 — قاعة 3103', code: 'CAD' }
+    ],
+    studyTarget: 'أمراض الصمام الأورطي (Aortic Stenosis & Regurgitation)'
+  },
+  'خميس': {
+    isCollegeDay: true,
+    dayName: 'الخميس',
+    sessions: [
+      { id: 'thu_1', time: '08:45 - 10:25 ص', name: 'CAD Tricuspid & Prosthetic Valves (الصمامات)', type: 'محاضرة مدرج', loc: 'مدرج الكلية', code: 'CAD' },
+      { id: 'thu_2', time: '10:30 - 12:10 م', name: 'CAD Atherosclerosis & Dyslipidemia (التصلب والدهون)', type: 'محاضرة مدرج', loc: 'مدرج الكلية', code: 'CAD' },
+      { id: 'thu_3', time: '12:30 - 02:10 م', name: 'SGT & SGD PED (سكشن أطفال)', type: 'سكشن أطفال (SGT & SGD)', loc: 'مبنى 2 — قاعة 2018', code: 'PED' },
+      { id: 'thu_4', time: '02:15 - 03:55 م', name: 'Clinical PED (كلينيكال أطفال)', type: 'سكشن كلينيكال (Clinical)', loc: 'المستشفى — قاعة 12', code: 'PED' }
+    ],
+    studyTarget: 'تصلب الشرايين والدهون والصمامات الصناعية (Prosthetic Valves)'
+  }
+};
+
+let _selectedScheduleDay = 'all';
+
+function getCairoLiveStatus() {
+  const now = new Date();
+  const cairoStr = now.toLocaleString('en-US', { timeZone: 'Africa/Cairo' });
+  const cairoDate = new Date(cairoStr);
+  const hours = cairoDate.getHours();
+  const minutes = cairoDate.getMinutes();
+  const currentMins = hours * 60 + minutes;
+  const timeFormatted = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+
+  const dayIdx = cairoDate.getDay();
+  const dayKeys = ['أحد', 'إثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'];
+  const dayNames = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة المبارك', 'السبت'];
+  const todayKey = dayKeys[dayIdx];
+  const dayFullName = dayNames[dayIdx];
+
+  const todayData = G7_WEEKLY_SCHEDULE[todayKey];
+  let rightNow = '';
+  let nextUp = '';
+  const isCollegeDay = !!todayData?.isCollegeDay;
+
+  if (todayData && isCollegeDay) {
+    if (currentMins < 525) {
+      rightNow = '🌅 فترة الصباح الباكر: الاستعداد والانطلاق للكلية وجلسة التحضير السريعة.';
+      nextUp = `⏰ 08:45 ص: ${todayData.sessions[0].name} (${todayData.sessions[0].loc})`;
+    } else if (currentMins >= 525 && currentMins < 625) {
+      rightNow = `🏛️ أنت الآن في المحاضرة الأولى: ${todayData.sessions[0].name}<br><small style="color: #38bdf8;">📍 المكان: ${todayData.sessions[0].loc}</small>`;
+      nextUp = `⏰ 10:30 ص: ${todayData.sessions[1].name} (${todayData.sessions[1].loc})`;
+    } else if (currentMins >= 625 && currentMins < 630) {
+      rightNow = '🚶‍♂️ استراحة فاصلة 5 دقائق بين المحاضرتين: الانتقال للمدرج.';
+      nextUp = `⏰ 10:30 ص: ${todayData.sessions[1].name} (${todayData.sessions[1].loc})`;
+    } else if (currentMins >= 630 && currentMins < 730) {
+      rightNow = `🏛️ أنت الآن في المحاضرة الثانية: ${todayData.sessions[1].name}<br><small style="color: #38bdf8;">📍 المكان: ${todayData.sessions[1].loc}</small>`;
+      nextUp = '⏰ 12:10 م: صلاة الظهر واستراحة الغداء 🕌';
+    } else if (currentMins >= 730 && currentMins < 750) {
+      rightNow = '🕌 استراحة صلاة الظهر والغداء وشحن الطاقة!';
+      nextUp = `⏰ 12:30 م: ${todayData.sessions[2].name} (${todayData.sessions[2].loc})`;
+    } else if (currentMins >= 750 && currentMins < 850) {
+      rightNow = `🩺 أنت الآن في سكشن جروب 7 الأول:<br><b>${todayData.sessions[2].name}</b><br><small style="color: #34d399;">📍 المكان: <b>${todayData.sessions[2].loc}</b></small>`;
+      nextUp = `⏰ 02:15 م: ${todayData.sessions[3].name} (${todayData.sessions[3].loc})`;
+    } else if (currentMins >= 850 && currentMins < 855) {
+      rightNow = '🚶‍♂️ فاصل 5 دقائق: التوجه لقاعة السكشن الثاني.';
+      nextUp = `⏰ 02:15 م: ${todayData.sessions[3].name} (${todayData.sessions[3].loc})`;
+    } else if (currentMins >= 855 && currentMins < 955) {
+      rightNow = `🩺 أنت الآن في سكشن جروب 7 الثاني:<br><b>${todayData.sessions[3].name}</b><br><small style="color: #34d399;">📍 المكان: <b>${todayData.sessions[3].loc}</b></small>`;
+      nextUp = '⏰ 04:00 م: انتهاء دوام الكلية والعودة للمنزل 🍲';
+    } else if (currentMins >= 955 && currentMins < 1050) {
+      rightNow = '🍲 فترة العودة والراحة: تناول وجبة الغداء وقيلولة لاستعادة النشاط الذهني.';
+      nextUp = `⏰ 05:30 م: بدء جلسة التركيز العميق (مذاكرة اليوم) 📚`;
+    } else if (currentMins >= 1050 && currentMins < 1200) {
+      rightNow = `📚 أنت الآن في جلسة التركيز العميق 1:<br>🎯 المستهدف: <b>${todayData.studyTarget}</b>`;
+      nextUp = '⏰ 08:00 م: صلاة العشاء واستراحة فنجان قهوة ☕';
+    } else if (currentMins >= 1200 && currentMins < 1230) {
+      rightNow = '🕌 صلاة العشاء واستراحة خفيفة لشحن التركيز.';
+      nextUp = '⏰ 08:30 م: جلسة التطبيق وحل كويزات الكارديو 🩺';
+    } else if (currentMins >= 1230 && currentMins < 1350) {
+      rightNow = '🩺 أنت الآن في جلسة التطبيق والأسئلة:<br>حل كويزات الكارديو ومراجعة فلاش كاردز المصطلحات.';
+      nextUp = '⏰ 10:30 م: التقييم اليومي والاستعداد للنوم الصحي 🌌';
+    } else {
+      rightNow = '🌌 وقت السكينة والنوم العميق: احرص على النوم لحفظ ما تعلمته وتثبيته بالذاكرة.';
+      nextUp = '⏰ غداً صباحاً: يوم دراسي جديد مليء بالإنجاز 🌅';
+    }
+  } else if (todayKey === 'إثنين') {
+    if (currentMins < 750) {
+      rightNow = '🧪 يوم المهارات والاستذكار الحر: لا توجد محاضرات مدرج؛ فرصة لإنهاء موديول القلب.';
+      nextUp = '⏰ 12:30 م: Open Lab معمل المهارات (المستشفى — قاعة 1)';
+    } else if (currentMins >= 750 && currentMins < 850) {
+      rightNow = '🧪 أنت الآن في Open Lab معمل المهارات المفتوح (المستشفى — قاعة 1).';
+      nextUp = '⏰ 02:15 م: جلسة مذاكرة عميقة وتطبيق بالمنزل';
+    } else if (currentMins >= 855 && currentMins < 1200) {
+      rightNow = `📚 جلسة مذاكرة عميقة: <b>${todayData.studyTarget}</b>`;
+      nextUp = '⏰ 08:00 م: صلاة العشاء واستراحة';
+    } else {
+      rightNow = '🌌 وقت السكينة والنوم العميق.';
+      nextUp = '⏰ الثلاثاء 08:45 ص: محاضرات الصمامات والأطفال بالمدرج';
+    }
+  } else if (todayKey === 'جمعة') {
+    rightNow = '🕌 يوم الجمعة المبارك: صلاة الجمعة وسورة الكهف وراحة أسرية، ومراجعة أسبوعية متباعدة (SRS).';
+    nextUp = '⏰ السبت: يوم التأسيس والمذاكرة العميقة 👑';
+  } else {
+    rightNow = '👑 سبت التأسيس والمذاكرة العميقة: إنهاء أي متأخرات وتثبيت شباتر الكارديو قبل بداية الأسبوع.';
+    nextUp = '⏰ الأحد 08:45 ص: بداية أسبوع الكلية الجديد 🏛️';
+  }
+
+  return {
+    timeFormatted,
+    dayKey: todayKey,
+    dayFullName,
+    rightNow,
+    nextUp,
+    studyTarget: todayData?.studyTarget || 'مراجعة متباعدة وتثبيت ما تم تحصيله خلال الأسبوع',
+    isCollegeDay
+  };
+}
+
+async function renderScheduleSection() {
+  const status = getCairoLiveStatus();
+  const uid = getUID();
+  const todayIso = new Date().toISOString().split('T')[0];
+
+  // 1. Update Clock & Badges
+  const clockEl = document.getElementById('scheduleLiveClock');
+  if (clockEl) clockEl.textContent = `⏰ ${status.timeFormatted} (${status.dayFullName})`;
+
+  const todayDayHeader = document.getElementById('scheduleTodayDayHeader');
+  if (todayDayHeader) todayDayHeader.textContent = `يوم ${status.dayFullName} — التوقيت: ${status.timeFormatted}`;
+
+  const statusBadge = document.getElementById('scheduleTodayStatusBadge');
+  if (statusBadge) {
+    statusBadge.textContent = status.isCollegeDay ? '🏛️ دوام الكلية نشط' : '☕ استذكار حر ومراجعة';
+    statusBadge.className = status.isCollegeDay ? 'badge-emerald' : 'badge-gold';
+  }
+
+  // 2. Update Live Radar in both Home and Schedule Tab
+  const homeRightNow = document.getElementById('homeScheduleRightNow');
+  const schedRightNow = document.getElementById('schedTabRightNow');
+  if (homeRightNow) homeRightNow.innerHTML = status.rightNow;
+  if (schedRightNow) schedRightNow.innerHTML = status.rightNow;
+
+  const homeNextUp = document.getElementById('homeScheduleNextUp');
+  const schedNextUp = document.getElementById('schedTabNextUp');
+  if (homeNextUp) homeNextUp.innerHTML = status.nextUp;
+  if (schedNextUp) schedNextUp.innerHTML = status.nextUp;
+
+  const schedStudyTarget = document.getElementById('schedTabStudyTarget');
+  if (schedStudyTarget) schedStudyTarget.textContent = status.studyTarget;
+
+  // 3. Fetch attendance logs to match against schedule and list missed sections
+  let attendanceLogs = [];
+  try {
+    const { data: att } = await db.from('attendance_logs').select('*').order('created_at', { ascending: false }).limit(50);
+    attendanceLogs = (att || []).filter(a => !a.session_title?.includes('[UID:') || a.session_title.includes(`[UID:${uid}]`));
+  } catch (e) {}
+
+  // 4. Render Missed Sections List
+  const missedListEl = document.getElementById('missedSectionsList');
+  if (missedListEl) {
+    const missed = attendanceLogs.filter(a => a.status === 'غياب' || a.status === 'غائب');
+    if (missed.length === 0) {
+      missedListEl.innerHTML = `<div class="empty-state" style="color: #34d399;">🎉 ممتاز يا دكتور! لا يوجد أي سكشن غائب مسجل. حضورك كامل 100%! 🩺</div>`;
+    } else {
+      missedListEl.innerHTML = missed.map(m => {
+        const cleanTitle = (m.session_title || '').replace(/\[UID:\d+\]\s*/g, '').trim();
+        return `
+          <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 10px; padding: 12px; margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <span style="background: #ef4444; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; font-weight: 700;">غياب</span>
+                <b style="color: #fff; margin-right: 6px; font-size: 0.92rem;">${cleanTitle}</b>
+              </div>
+              <span style="color: #94a3b8; font-size: 0.78rem;">📅 ${m.date || 'سابقاً'}</span>
+            </div>
+            ${m.reason ? `<div style="color: #cbd5e1; font-size: 0.8rem; margin-top: 4px;">سبب الغياب: ${m.reason}</div>` : ''}
+            <div style="margin-top: 8px; display: flex; justify-content: flex-end;">
+              <button type="button" onclick="toggleMakeupAttendance('${m.id}')" style="background: rgba(16,185,129,0.15); border: 1px solid #10b981; color: #34d399; padding: 3px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">
+                ✨ تم تعويض السكشن ومذاكرته
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
+  // 5. Fetch Pending & Overdue Tasks
+  let pendingTasks = [];
+  let overdueTasks = [];
+  try {
+    const { data: tasks } = await db.from('daily_tasks').select('*').order('created_at', { ascending: false }).limit(40);
+    const userTasks = (tasks || []).filter(t => !t.category?.includes('usr:') || t.category.includes(`usr:${uid}`));
+    userTasks.forEach(t => {
+      const isDone = t.status === 'منجز' || t.status === 'done' || t.status === 'مكتملة';
+      if (!isDone) {
+        if (t.date < todayIso || (t.reminder_count && t.reminder_count > 0)) {
+          overdueTasks.push(t);
+        } else {
+          pendingTasks.push(t);
+        }
+      }
+    });
+  } catch (e) {}
+
+  // Update Home Alerts Bar
+  const overdueAlertText = document.getElementById('homeScheduleOverdueText');
+  if (overdueAlertText) {
+    if (overdueTasks.length > 0) {
+      overdueAlertText.innerHTML = `<span>⚠️ لديك <b>${overdueTasks.length}</b> مهمة متأخرة أو مؤجلة تحتاج حسم!</span>`;
+      overdueAlertText.style.color = '#f87171';
+    } else {
+      overdueAlertText.innerHTML = `<span>🟢 لا توجد مهام متأخرة. كل التزاماتك في التمام يا دكتور!</span>`;
+      overdueAlertText.style.color = '#34d399';
+    }
+  }
+
+  // Render Schedule Pending & Overdue Tasks List
+  const tasksListEl = document.getElementById('schedulePendingTasksList');
+  if (tasksListEl) {
+    const allPending = [...overdueTasks, ...pendingTasks];
+    if (allPending.length === 0) {
+      tasksListEl.innerHTML = `<div class="empty-state" style="color: #34d399;">🎉 كل المهام اليومية منجزة بنجاح! لا توجد مهام معلقة.</div>`;
+    } else {
+      tasksListEl.innerHTML = allPending.slice(0, 8).map(t => {
+        const isOverdue = t.date < todayIso;
+        const cleanTitle = (t.title || '').replace(/\[usr:\d+\]\s*/g, '').trim();
+        return `
+          <div style="background: ${isOverdue ? 'rgba(239, 68, 68, 0.06)' : 'rgba(255, 255, 255, 0.04)'}; border: 1px solid ${isOverdue ? 'rgba(239, 68, 68, 0.25)' : 'rgba(255, 255, 255, 0.08)'}; border-radius: 10px; padding: 12px; margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <span style="background: ${isOverdue ? '#ef4444' : '#3b82f6'}; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; font-weight: 700;">
+                  ${isOverdue ? 'متأخرة' : 'قيد التنفيذ'}
+                </span>
+                <b style="color: #fff; margin-right: 6px; font-size: 0.92rem;">${cleanTitle}</b>
+              </div>
+              <span style="color: #94a3b8; font-size: 0.78rem;">📅 ${t.date || 'اليوم'}</span>
+            </div>
+            <div style="margin-top: 8px; display: flex; justify-content: flex-end;">
+              <button type="button" onclick="toggleTaskDoneSchedule('${t.id}')" style="background: rgba(16,185,129,0.15); border: 1px solid #10b981; color: #34d399; padding: 3px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">
+                ✅ تم الإنجاز (+25 XP)
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
+  // 6. Render Weekly Schedule Cards for Group 7
+  const container = document.getElementById('weeklyScheduleCardsContainer');
+  if (container) {
+    let daysToRender = [];
+    if (_selectedScheduleDay === 'all') {
+      daysToRender = ['أحد', 'إثنين', 'ثلاثاء', 'أربعاء', 'خميس'];
+    } else if (G7_WEEKLY_SCHEDULE[_selectedScheduleDay]) {
+      daysToRender = [_selectedScheduleDay];
+    }
+
+    let cardsHtml = '';
+    daysToRender.forEach(dKey => {
+      const dayData = G7_WEEKLY_SCHEDULE[dKey];
+      const isToday = status.dayKey === dKey;
+
+      cardsHtml += `
+        <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid ${isToday ? '#38bdf8' : 'rgba(255, 255, 255, 0.08)'}; border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: ${isToday ? '0 0 16px rgba(56, 189, 248, 0.15)' : 'none'};">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 1.2rem;">🗓️</span>
+              <h4 style="margin: 0; font-size: 1.05rem; color: ${isToday ? '#38bdf8' : '#fff'}; font-weight: 800;">
+                يوم ${dayData.dayName} ${isToday ? '🌟 (اليوم الحالي)' : ''}
+              </h4>
+            </div>
+            <span style="color: #94a3b8; font-size: 0.8rem;">🎯 مستهدف المذاكرة: ${dayData.studyTarget}</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+      `;
+
+      dayData.sessions.forEach(sess => {
+        const attRecord = attendanceLogs.find(a => (a.session_title || '').includes(sess.name) || (a.session_title || '').includes(sess.id));
+        const attStatus = attRecord ? attRecord.status : null;
+
+        cardsHtml += `
+          <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 10px; padding: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span style="background: ${sess.code === 'CAD' ? '#ef4444' : '#0ea5e9'}; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; font-weight: 800;">
+                  ${sess.code}
+                </span>
+                <span style="color: #94a3b8; font-size: 0.76rem; background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px;">
+                  ${sess.type}
+                </span>
+                <b style="color: #fff; font-size: 0.95rem;">${sess.name}</b>
+              </div>
+              <div style="color: #cbd5e1; font-size: 0.82rem; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 2px;">
+                <span>⏰ <b>${sess.time}</b></span>
+                <span style="color: #34d399;">📍 <b>${sess.loc}</b></span>
+              </div>
+            </div>
+
+            <!-- Attendance Action Buttons -->
+            <div style="display: flex; align-items: center; gap: 8px;">
+              ${attStatus === 'حضور' ? `
+                <span style="background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid #10b981; padding: 4px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 700;">
+                  🟢 تم تسجيل الحضور
+                </span>
+              ` : attStatus === 'غياب' ? `
+                <span style="background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid #ef4444; padding: 4px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 700;">
+                  🔴 مسجل غياب
+                </span>
+              ` : `
+                <button type="button" onclick="toggleSessionAttendance('${sess.code}', '${sess.name}', 'حضور', '${dayData.dayName}')" style="background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34d399; padding: 5px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">
+                  ✅ سجلت الحضور
+                </button>
+                <button type="button" onclick="toggleSessionAttendance('${sess.code}', '${sess.name}', 'غياب', '${dayData.dayName}')" style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25); color: #f87171; padding: 5px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">
+                  ❌ سكشن لم أحضره
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+      });
+
+      cardsHtml += `
+          </div>
+        </div>
+      `;
+    });
+
+    container.innerHTML = cardsHtml;
+  }
+}
+
+// Filter Tab Day Selector
+window.selectScheduleDay = function(dayKey) {
+  _selectedScheduleDay = dayKey;
+  const btnIds = {
+    'أحد': 'btnDaySun',
+    'إثنين': 'btnDayMon',
+    'ثلاثاء': 'btnDayTue',
+    'أربعاء': 'btnDayWed',
+    'خميس': 'btnDayThu',
+    'all': 'btnDayAll'
+  };
+  Object.entries(btnIds).forEach(([k, id]) => {
+    const b = document.getElementById(id);
+    if (b) {
+      if (k === dayKey) b.classList.add('active');
+      else b.classList.remove('active');
+    }
+  });
+  renderScheduleSection();
+};
+
+// Toggle Attendance in Supabase
+window.toggleSessionAttendance = async function(courseCode, sessionTitle, status, dayName) {
+  const uid = getUID();
+  const todayIso = new Date().toISOString().split('T')[0];
+  try {
+    await db.from('attendance_logs').insert({
+      course_code: courseCode,
+      session_title: `[UID:${uid}] ${sessionTitle} (${dayName})`,
+      status: status,
+      date: todayIso
+    });
+    alert(status === 'حضور' ? '🎉 تم تسجيل حضورك بنجاح يا دكتور! عاش (+30 XP)' : '⚠️ تم تسجيل الغياب في رادار التعويض لمراجعته قبل الامتحانات.');
+    await renderScheduleSection();
+  } catch (err) {
+    console.error('toggleSessionAttendance error:', err);
+  }
+};
+
+// Toggle Makeup Attendance
+window.toggleMakeupAttendance = async function(attendanceId) {
+  try {
+    await db.from('attendance_logs').update({
+      status: 'تم التعويض',
+      makeup_plan: 'تمت المذاكرة والتعويض بنجاح'
+    }).eq('id', attendanceId);
+    alert('✨ عاش يا دكتور! تم تعويض السكشن ومذاكرته بنجاح وتم شطبه من سجل الغياب (+40 XP).');
+    await renderScheduleSection();
+  } catch (err) {
+    console.error('toggleMakeupAttendance error:', err);
+  }
+};
+
+// Toggle Task Done
+window.toggleTaskDoneSchedule = async function(taskId) {
+  try {
+    await db.from('daily_tasks').update({
+      status: 'منجز',
+      updated_at: new Date().toISOString()
+    }).eq('id', taskId);
+    alert('✅ تم إنجاز المهمة بنجاح يا دكتور! استمر في الإنجاز (+25 XP).');
+    await renderScheduleSection();
+    if (typeof renderTasksAndAppointments === 'function') renderTasksAndAppointments();
+  } catch (err) {
+    console.error('toggleTaskDoneSchedule error:', err);
+  }
+};
+
+// Toggle Today Study Completed
+window.toggleTodayStudyCompleted = async function() {
+  const uid = getUID();
+  const todayIso = new Date().toISOString().split('T')[0];
+  try {
+    await db.from('daily_tasks').insert({
+      category: `[usr:${uid}] مذاكرة_اليوم_مكتملة`,
+      title: 'إنجاز جلسة مذاكرة اليوم الرسمية المقررة بالجدول',
+      status: 'منجز',
+      date: todayIso
+    });
+    alert('👑 فخورين بيك يا دكتور! تم توثيق إنجاز مقرر المذاكرة لليوم بالكامل (+50 XP).');
+    await renderScheduleSection();
+  } catch (err) {
+    console.error('toggleTodayStudyCompleted error:', err);
+  }
+};
+
+// Quick Absence Prompt
+window.openLogAbsencePrompt = async function() {
+  const sessionName = prompt('أدخل اسم السكشن أو الموضوع الذي فاتك:');
+  if (!sessionName || !sessionName.trim()) return;
+  const course = prompt('الموديول (CAD أو PED):', 'CAD') || 'CAD';
+  const reason = prompt('سبب الغياب (اختياري):', 'ظرف طارئ') || '';
+  const uid = getUID();
+  const todayIso = new Date().toISOString().split('T')[0];
+
+  try {
+    await db.from('attendance_logs').insert({
+      course_code: course.toUpperCase(),
+      session_title: `[UID:${uid}] ${sessionName.trim()}`,
+      status: 'غياب',
+      reason: reason,
+      date: todayIso
+    });
+    alert('⚠️ تم تسجيل السكشن الفائت في رادار التعويض لمذاكرته.');
+    await renderScheduleSection();
+  } catch (err) {
+    console.error('openLogAbsencePrompt error:', err);
+  }
+};
+
+// Quick Task Prompt
+window.openQuickTaskPrompt = async function() {
+  const taskTitle = prompt('أدخل عنوان المهمة المطلوبة:');
+  if (!taskTitle || !taskTitle.trim()) return;
+  const uid = getUID();
+  const todayIso = new Date().toISOString().split('T')[0];
+
+  try {
+    await db.from('daily_tasks').insert({
+      category: `[usr:${uid}] مهام_جدولي`,
+      title: taskTitle.trim(),
+      status: 'قيد التنفيذ',
+      date: todayIso
+    });
+    alert('🎯 تم إضافة المهمة بنجاح إلى جدولك اليومي!');
+    await renderScheduleSection();
+    if (typeof renderTasksAndAppointments === 'function') renderTasksAndAppointments();
+  } catch (err) {
+    console.error('openQuickTaskPrompt error:', err);
+  }
+};
+
+window.renderScheduleSection = renderScheduleSection;
+
 // Immediate initialization if already authenticated
 if (typeof localStorage !== 'undefined' && localStorage.getItem('abdallah_journey_auth_token') === 'authenticated_dr_abdallah_secure_key_2026') {
   if (document.readyState === 'complete' || document.readyState === 'interactive') {
@@ -5745,6 +6259,7 @@ if (typeof localStorage !== 'undefined' && localStorage.getItem('abdallah_journe
     document.addEventListener('DOMContentLoaded', () => initDashboard());
   }
 }
+
 
 
 
