@@ -430,58 +430,6 @@
 
           </div>
 
-          <!-- 📅 1.5 Live Schedule Radar & Next Up Card (جروب 7) -->
-          <div class="split-card full-width-card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(59, 130, 246, 0.12)); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 16px; padding: 20px;">
-            <div class="card-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <span style="font-size: 1.6rem;">📅</span>
-                <div>
-                  <h3 style="margin: 0; font-size: 1.2rem; color: #fff; font-weight: 800;">قسم جدولي ومواعيد اليوم (جروب 7 - Block 7)</h3>
-                  <p style="margin: 3px 0 0; color: #94a3b8; font-size: 0.82rem;">رادار حي لحظي: أين أنت الآن، السكشن القادم بقاعته، والمهام المعلقة</p>
-                </div>
-              </div>
-              <button type="button" class="btn-action-sm" onclick="switchTabDirect('schedule')" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; border: none; padding: 8px 16px; border-radius: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);">
-                <span>📋 فتح جدول السكاشن الكامل</span> ➔
-              </button>
-            </div>
-
-            <!-- Live Status Banner & Next Up Grid -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
-              <!-- Right Now -->
-              <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 16px;">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                  <span style="font-size: 1.1rem;">📍</span>
-                  <span style="font-weight: 700; color: #38bdf8; font-size: 0.92rem;">أنت فين والمفروض تعمل إيه دلوقتي؟</span>
-                </div>
-                <div id="homeScheduleRightNow" style="color: #f1f5f9; font-size: 0.95rem; font-weight: 600; line-height: 1.5;">
-                  جاري قراءة الوقت وتحديد موقعك وجدولك...
-                </div>
-              </div>
-
-              <!-- Next Up -->
-              <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 16px;">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                  <span style="font-size: 1.1rem;">⏭️</span>
-                  <span style="font-weight: 700; color: #fbbf24; font-size: 0.92rem;">السكشن / الموعد القادم (Next Up):</span>
-                </div>
-                <div id="homeScheduleNextUp" style="color: #f1f5f9; font-size: 0.95rem; font-weight: 600; line-height: 1.5;">
-                  جاري مراجعة جدول السكاشن والمواعيد...
-                </div>
-              </div>
-            </div>
-
-            <!-- Pending / Missed Alerts Quick Bar -->
-            <div id="homeScheduleAlertsBar" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 0.85rem;">
-              <div id="homeScheduleOverdueText" style="color: #f87171; display: flex; align-items: center; gap: 6px;">
-                <span>⏳</span> <span>جاري فحص المهام والسكاشن...</span>
-              </div>
-              <div style="display: flex; gap: 8px;">
-                <button type="button" onclick="switchTabDirect('schedule')" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: #cbd5e1; padding: 4px 10px; border-radius: 8px; font-size: 0.78rem; cursor: pointer;">
-                  سجل الغياب والتعويض 🩺
-                </button>
-              </div>
-            </div>
-          </div>
 
           <!-- 🔔 2. Master Unified Activity Ledger & Table (سجل النشاطات والعمليات الأخيرة) -->
           <div class="split-card full-width-card" style="margin-bottom: 28px;">
@@ -603,13 +551,13 @@
 
         </section>
 
-        <!-- 📅 TAB: قسم جدولي ومواعيد السكاشن (جروب 7) -->
+        <!-- 📅 TAB: قسم إدارة المواعيد والسكاشن الأكاديمية (جروب 7 - Block 7) -->
         <section class="tab-pane" id="tab-schedule">
           <div class="section-title-row">
             <div>
-              <h2>📅 قسم جدولي ومواعيد السكاشن • د. عبدالله (جروب 7) 🩺</h2>
+              <h2>📅 قسم جدولي وإدارة السكاشن • د. عبدالله (جروب 7) 🏛️✨</h2>
               <p style="margin: 4px 0 0; color: var(--text-secondary); font-size: 0.85rem;">
-                الجدول الرسمي المعتمد للفرقة الرابعة (الفصل الدراسي السابع Block 7) — متزامن لحظياً مع التنبيهات وسجل الحضور والغياب
+                المنظومة الأكاديمية المتكاملة لإدارة دوام الكلية، قاعات السكاشن الرسمية، رصد الغياب والتعويض، والمهام المؤجلة
               </p>
             </div>
             <div class="actions-group">
@@ -617,73 +565,120 @@
             </div>
           </div>
 
-          <!-- 1. Live Radar & Next Up Card -->
-          <div class="split-card full-width-card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(16, 185, 129, 0.08)); border: 1px solid rgba(16, 185, 129, 0.3);">
-            <div class="card-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 1.5rem;">🧭</span>
-                <div>
-                  <h3 style="margin: 0; font-size: 1.15rem; color: #fff;">رادار اليوم الدراسي المباشر</h3>
-                  <p style="margin: 2px 0 0; color: var(--text-secondary); font-size: 0.8rem;" id="scheduleTodayDayHeader">اليوم والتاريخ</p>
-                </div>
+          <!-- 📊 1. Academic Executive Stats KPI Grid -->
+          <div class="kpi-grid" style="margin-bottom: 24px;">
+            <!-- Stat 1: Today College Attendance Status -->
+            <div class="kpi-card">
+              <div class="kpi-body">
+                <span class="kpi-label">🏛️ حالة دوام الكلية اليوم</span>
+                <div class="kpi-value" id="kpiCollegeStatusVal" style="font-size: 1.15rem; color: #38bdf8;">جاري الفحص...</div>
+                <div class="kpi-trend-pill" id="kpiCollegeStatusSub" style="color: #94a3b8;">تحديث لحظي بتوقيت القاهرة</div>
               </div>
-              <span class="badge-emerald" id="scheduleTodayStatusBadge">دوام الكلية نشط</span>
+              <div class="kpi-icon-box" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">🏛️</div>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; padding: 10px 0;">
+            <!-- Stat 2: Attendance Rate -->
+            <div class="kpi-card">
+              <div class="kpi-body">
+                <span class="kpi-label">🩺 نسبة حضور السكاشن</span>
+                <div class="kpi-value" id="kpiAttendanceRateVal" style="color: #34d399;">100%</div>
+                <div class="kpi-trend-pill" style="color: #34d399;">ملتزم بالكامل • حضور ممتاز 🌟</div>
+              </div>
+              <div class="kpi-icon-box" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">✅</div>
+            </div>
+
+            <!-- Stat 3: Absence Safety Buffer -->
+            <div class="kpi-card">
+              <div class="kpi-body">
+                <span class="kpi-label">🛡️ رصيد الغياب الآمن</span>
+                <div class="kpi-value" id="kpiAbsenceBufferVal" style="color: #fbbf24;">4 سكاشن</div>
+                <div class="kpi-trend-pill" style="color: #fde68a;">حد الأمان للائحة الحرمان (25%)</div>
+              </div>
+              <div class="kpi-icon-box" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">🛡️</div>
+            </div>
+
+            <!-- Stat 4: Active Medical Module -->
+            <div class="kpi-card">
+              <div class="kpi-body">
+                <span class="kpi-label">🫀 الموديول الطبي النشط</span>
+                <div class="kpi-value" style="font-size: 1.1rem; color: #f43f5e;">موديول القلب</div>
+                <div class="kpi-trend-pill" style="color: #fda4af;">الأسبوع 1 من 5 • متبقي للميدترم 14 يوماً</div>
+              </div>
+              <div class="kpi-icon-box" style="background: rgba(244, 63, 94, 0.15); color: #f43f5e;">🫀</div>
+            </div>
+          </div>
+
+          <!-- 🧭 2. Live Cairo Radar & Right Now / Next Up Card -->
+          <div class="split-card full-width-card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(59, 130, 246, 0.1)); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 16px; padding: 20px;">
+            <div class="card-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 14px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 1.6rem;">🧭</span>
+                <div>
+                  <h3 style="margin: 0; font-size: 1.2rem; color: #fff; font-weight: 800;">رادار المتابعة اللحظية وموقعك الأكاديمي المباشر</h3>
+                  <p style="margin: 3px 0 0; color: var(--text-secondary); font-size: 0.82rem;" id="scheduleTodayDayHeader">اليوم والتاريخ بالتوقيت المحلي</p>
+                </div>
+              </div>
+              <span class="badge-emerald" id="scheduleTodayStatusBadge" style="font-size: 0.85rem; padding: 6px 14px; border-radius: 20px;">دوام الكلية نشط</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
               <!-- Right Now Box -->
-              <div style="background: rgba(255,255,255,0.04); border-radius: 12px; padding: 16px; border: 1px solid rgba(56, 189, 248, 0.25);">
-                <div style="font-size: 0.85rem; font-weight: 700; color: #38bdf8; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+              <div style="background: rgba(30, 41, 59, 0.7); border-radius: 12px; padding: 18px; border: 1px solid rgba(56, 189, 248, 0.3);">
+                <div style="font-size: 0.88rem; font-weight: 700; color: #38bdf8; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
                   <span>📍</span> <span>أنت فين والمفروض تعمل إيه دلوقتي؟ (Right Now):</span>
                 </div>
-                <div id="schedTabRightNow" style="font-size: 1rem; color: #fff; font-weight: 600; line-height: 1.6;">
+                <div id="schedTabRightNow" style="font-size: 0.98rem; color: #fff; font-weight: 600; line-height: 1.6;">
                   جاري قراءة الوقت وتحديد موقعك...
                 </div>
               </div>
 
               <!-- Next Up Box -->
-              <div style="background: rgba(255,255,255,0.04); border-radius: 12px; padding: 16px; border: 1px solid rgba(251, 191, 36, 0.25);">
-                <div style="font-size: 0.85rem; font-weight: 700; color: #fbbf24; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-                  <span>⏭️</span> <span>السكشن / الموعد القادم (Next Up):</span>
+              <div style="background: rgba(30, 41, 59, 0.7); border-radius: 12px; padding: 18px; border: 1px solid rgba(251, 191, 36, 0.3);">
+                <div style="font-size: 0.88rem; font-weight: 700; color: #fbbf24; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                  <span>⏭️</span> <span>السكشن / الموعد القادم بقاعته (Next Up):</span>
                 </div>
-                <div id="schedTabNextUp" style="font-size: 1rem; color: #fff; font-weight: 600; line-height: 1.6;">
+                <div id="schedTabNextUp" style="font-size: 0.98rem; color: #fff; font-weight: 600; line-height: 1.6;">
                   جاري مراجعة جدول السكاشن...
                 </div>
               </div>
             </div>
 
-            <!-- Today's Study Target -->
-            <div style="margin-top: 12px; padding: 14px; background: rgba(0,0,0,0.25); border-radius: 10px; border: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+            <!-- Today's Study Target & Fast Action Button -->
+            <div style="margin-top: 14px; padding: 14px 18px; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
               <div>
-                <span style="font-size: 0.82rem; color: #94a3b8;">🎯 مقرر المذاكرة المستهدف اليوم:</span>
-                <div id="schedTabStudyTarget" style="font-size: 0.95rem; font-weight: 700; color: #34d399; margin-top: 2px;">
+                <span style="font-size: 0.8rem; color: #94a3b8;">🎯 مقرر المذاكرة المستهدف اليوم (موديول القلب والأطفال):</span>
+                <div id="schedTabStudyTarget" style="font-size: 0.96rem; font-weight: 700; color: #34d399; margin-top: 3px;">
                   تحميل المستهدف...
                 </div>
               </div>
-              <button type="button" id="btnToggleTodayStudy" onclick="toggleTodayStudyCompleted()" style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #34d399; padding: 6px 14px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">
-                ✅ تأكيد إنجاز مذاكرة اليوم (+50 XP)
+              <button type="button" id="btnToggleTodayStudy" onclick="toggleTodayStudyCompleted()" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0.25)); border: 1px solid #10b981; color: #34d399; padding: 8px 18px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                <span>✅ تأكيد إنجاز مذاكرة اليوم</span>
               </button>
             </div>
           </div>
 
-          <!-- 2. Interactive Weekly Schedule for Group 7 -->
+          <!-- 🏛️ 3. Interactive Weekly Schedule for Group 7 with Day Navigator -->
           <div class="split-card full-width-card" style="margin-bottom: 24px;">
             <div class="card-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
               <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 1.4rem;">🏛️</span>
+                <span style="font-size: 1.5rem;">🏛️</span>
                 <div>
-                  <h3 style="margin: 0; font-size: 1.15rem; color: #fff;">جدول الأسبوع الرسمي لـ جروب 7 وقاعات السكاشن</h3>
-                  <p style="margin: 2px 0 0; color: var(--text-secondary); font-size: 0.8rem;">اختر اليوم لعرض محاضراته وسكاشنه وتسجيل الحضور</p>
+                  <h3 style="margin: 0; font-size: 1.18rem; color: #fff; font-weight: 800;">جدول الأسبوع الرسمي لـ جروب 7 (Group 7 - Block 7)</h3>
+                  <p style="margin: 2px 0 0; color: var(--text-secondary); font-size: 0.8rem;">
+                    قاعات الكلية المعتمدة (المستشفى ومبنى 2 ومبنى 3) • اختر اليوم لعرض تفاصيله وتسجيل الحضور
+                  </p>
                 </div>
               </div>
 
-              <!-- Day Tabs Selector -->
+              <!-- Day Filter Tabs with Status Hints -->
               <div class="time-filter-controls" style="margin: 0; display: flex; gap: 6px; flex-wrap: wrap;">
-                <button type="button" class="time-filter-btn" id="btnDaySun" onclick="selectScheduleDay('أحد')">الأحد</button>
-                <button type="button" class="time-filter-btn" id="btnDayMon" onclick="selectScheduleDay('إثنين')">الإثنين</button>
-                <button type="button" class="time-filter-btn" id="btnDayTue" onclick="selectScheduleDay('ثلاثاء')">الثلاثاء</button>
-                <button type="button" class="time-filter-btn" id="btnDayWed" onclick="selectScheduleDay('أربعاء')">الأربعاء</button>
-                <button type="button" class="time-filter-btn" id="btnDayThu" onclick="selectScheduleDay('خميس')">الخميس</button>
+                <button type="button" class="time-filter-btn" id="btnDaySun" onclick="selectScheduleDay('أحد')">الأحد 🏛️</button>
+                <button type="button" class="time-filter-btn" id="btnDayMon" onclick="selectScheduleDay('إثنين')">الإثنين ☕</button>
+                <button type="button" class="time-filter-btn" id="btnDayTue" onclick="selectScheduleDay('ثلاثاء')">الثلاثاء 🏛️</button>
+                <button type="button" class="time-filter-btn" id="btnDayWed" onclick="selectScheduleDay('أربعاء')">الأربعاء 🏛️</button>
+                <button type="button" class="time-filter-btn" id="btnDayThu" onclick="selectScheduleDay('خميس')">الخميس 🏛️</button>
+                <button type="button" class="time-filter-btn" id="btnDayFri" onclick="selectScheduleDay('جمعة')">الجمعة 🕌</button>
+                <button type="button" class="time-filter-btn" id="btnDaySat" onclick="selectScheduleDay('سبت')">السبت 👑</button>
                 <button type="button" class="time-filter-btn active" id="btnDayAll" onclick="selectScheduleDay('all')">📋 كل الأسبوع</button>
               </div>
             </div>
@@ -694,7 +689,7 @@
             </div>
           </div>
 
-          <!-- 3. Two-Column Split: Missed Sections / Absence Tracker & Pending Tasks -->
+          <!-- ⚖️ 4. Two-Column Operations Grid: Missed Sections & Pending Tasks -->
           <div class="content-split-grid" style="margin-bottom: 24px;">
             <!-- Column 1: Missed Sections & Absence Log -->
             <div class="split-card">
@@ -702,17 +697,17 @@
                 <div style="display: flex; align-items: center; gap: 8px;">
                   <span style="font-size: 1.3rem;">⚠️</span>
                   <div>
-                    <h3 style="margin: 0; font-size: 1.05rem; color: #fff;">سكاشن لم تحضرها وسجل التعويض</h3>
-                    <p style="margin: 2px 0 0; color: var(--text-secondary); font-size: 0.78rem;">رصد أي غياب لتعويضه ومذاكرته قبل الامتحان</p>
+                    <h3 style="margin: 0; font-size: 1.05rem; color: #fff; font-weight: 800;">سكاشن لم تحضرها وسجل التعويض</h3>
+                    <p style="margin: 2px 0 0; color: var(--text-secondary); font-size: 0.78rem;">رصد أي غياب لتعويضه ومذاكرته قبل امتحانات الميدترم والفاينل</p>
                   </div>
                 </div>
-                <button type="button" class="btn-action-sm" onclick="openLogAbsencePrompt()" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); padding: 4px 10px; border-radius: 8px; font-weight: 700; cursor: pointer;">
+                <button type="button" class="btn-action-sm" onclick="openLogAbsencePrompt()" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); padding: 5px 12px; border-radius: 8px; font-weight: 700; cursor: pointer;">
                   + تسجيل سكشن فائت
                 </button>
               </div>
 
-              <div id="missedSectionsList" style="max-height: 380px; overflow-y: auto; padding: 8px 0;">
-                <div class="empty-state">🎉 ممتاز يا دكتور! لا يوجد أي سكشن غائب مسجل. حضورك كامل 100%!</div>
+              <div id="missedSectionsList" style="max-height: 420px; overflow-y: auto; padding: 8px 0;">
+                <div class="empty-state" style="color: #34d399;">🎉 ممتاز يا دكتور! لا يوجد أي سكشن غائب مسجل. حضورك كامل 100%! 🩺</div>
               </div>
             </div>
 
@@ -722,17 +717,69 @@
                 <div style="display: flex; align-items: center; gap: 8px;">
                   <span style="font-size: 1.3rem;">⏳</span>
                   <div>
-                    <h3 style="margin: 0; font-size: 1.05rem; color: #fff;">المهام المؤجلة والمتأخرة والمطلوبة</h3>
-                    <p style="margin: 2px 0 0; color: var(--text-secondary); font-size: 0.78rem;">المهام التي لم تُنفذ بعد أو تم تأخيرها لحسمها فوراً</p>
+                    <h3 style="margin: 0; font-size: 1.05rem; color: #fff; font-weight: 800;">المهام المؤجلة والمتأخرة والمطلوبة</h3>
+                    <p style="margin: 2px 0 0; color: var(--text-secondary); font-size: 0.78rem;">التكليفات والواجبات التي لم تُنجز بعد لحسمها فوراً</p>
                   </div>
                 </div>
-                <button type="button" class="btn-action-sm" onclick="openQuickTaskPrompt()" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); padding: 4px 10px; border-radius: 8px; font-weight: 700; cursor: pointer;">
+                <button type="button" class="btn-action-sm" onclick="openQuickTaskPrompt()" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); padding: 5px 12px; border-radius: 8px; font-weight: 700; cursor: pointer;">
                   + مهمة جديدة
                 </button>
               </div>
 
-              <div id="schedulePendingTasksList" style="max-height: 380px; overflow-y: auto; padding: 8px 0;">
+              <div id="schedulePendingTasksList" style="max-height: 420px; overflow-y: auto; padding: 8px 0;">
                 <div class="empty-state">لا توجد مهام متأخرة حالياً. يومك منظم تماماً!</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 🗺️ 5. Semester 7 Modules Strategic Roadmap (خارطة موديولات الترم السابع) -->
+          <div class="split-card full-width-card" style="margin-bottom: 24px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 20px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+              <span style="font-size: 1.5rem;">🗺️</span>
+              <div>
+                <h3 style="margin: 0; font-size: 1.15rem; color: #fff; font-weight: 800;">خريطة موديولات الفصل الدراسي السابع (Block 7 Roadmap)</h3>
+                <p style="margin: 2px 0 0; color: var(--text-secondary); font-size: 0.8rem;">توزيع أسابيع الدراسة ومواعيد امتحانات الميدترم والفاينل والـ OSCE</p>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px;">
+              <!-- Module 1: Cardiology -->
+              <div style="background: rgba(244, 63, 94, 0.08); border: 1px solid rgba(244, 63, 94, 0.3); border-radius: 12px; padding: 14px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                  <b style="color: #f43f5e; font-size: 0.95rem;">🫀 1. موديول القلب (Cardiology)</b>
+                  <span style="background: #f43f5e; color: #fff; padding: 2px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 700;">الموديول النشط</span>
+                </div>
+                <div style="font-size: 0.82rem; color: #cbd5e1; line-height: 1.5;">
+                  • <b>المدة:</b> 5 أسابيع متفرغة (Full-time).<br>
+                  • <b>الميدترم:</b> في الأسبوع 3 (Mid-module).<br>
+                  • <b>الفاينل والنظري والـ OSCE:</b> نهاية الأسبوع 5.
+                </div>
+              </div>
+
+              <!-- Module 2: Chest -->
+              <div style="background: rgba(59, 130, 246, 0.06); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 12px; padding: 14px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                  <b style="color: #60a5fa; font-size: 0.95rem;">🫁 2. موديول الصدر (Chest)</b>
+                  <span style="background: rgba(255,255,255,0.06); color: #94a3b8; padding: 2px 8px; border-radius: 6px; font-size: 0.72rem;">الأسابيع 6 - 9</span>
+                </div>
+                <div style="font-size: 0.82rem; color: #cbd5e1; line-height: 1.5;">
+                  • <b>المدة:</b> 4 أسابيع دراسية.<br>
+                  • <b>الميدترم:</b> الأسبوع 8.<br>
+                  • <b>الفاينل والـ OSCE:</b> الأسبوع 9 (يليه استغلال شابتر أطفال Genetics).
+                </div>
+              </div>
+
+              <!-- Module 3: Hematology & Vascular -->
+              <div style="background: rgba(168, 85, 247, 0.06); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 12px; padding: 14px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                  <b style="color: #c084fc; font-size: 0.95rem;">🩸 3. الأوعية وأمراض الدم</b>
+                  <span style="background: rgba(255,255,255,0.06); color: #94a3b8; padding: 2px 8px; border-radius: 6px; font-size: 0.72rem;">الأسابيع 10 - 13</span>
+                </div>
+                <div style="font-size: 0.82rem; color: #cbd5e1; line-height: 1.5;">
+                  • <b>الميدترم:</b> حتى الأسبوع 12.<br>
+                  • <b>مقرر الأطفال:</b> إنهاء شباتر Nutrition و Infection.<br>
+                  • <b>مهلة إجازة ومراجعة:</b> أسبوعين قبل فاينل الترم.
+                </div>
               </div>
             </div>
           </div>

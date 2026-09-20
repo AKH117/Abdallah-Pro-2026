@@ -5753,55 +5753,66 @@ const G7_WEEKLY_SCHEDULE = {
     isCollegeDay: true,
     dayName: 'الأحد',
     sessions: [
-      { id: 'sun_1', time: '08:45 - 10:25 ص', name: 'CAD Intro to Cardiology (مقدمة القلب)', type: 'محاضرة مدرج', loc: 'مدرج الكلية', code: 'CAD' },
-      { id: 'sun_2', time: '10:30 - 12:10 م', name: 'CAD Normal ECG (رسم القلب الطبيعي)', type: 'محاضرة مدرج', loc: 'مدرج الكلية', code: 'CAD' },
+      { id: 'sun_1', time: '08:45 - 10:25 ص', name: 'CAD Intro to Cardiology (مقدمة القلب)', type: 'محاضرة مدرج', loc: 'مبنى 3 — مدرج 3315', code: 'CAD' },
+      { id: 'sun_2', time: '10:30 - 12:10 م', name: 'CAD Normal ECG (رسم القلب الطبيعي)', type: 'محاضرة مدرج', loc: 'مبنى 3 — مدرج 3315', code: 'CAD' },
       { id: 'sun_3', time: '12:30 - 02:10 م', name: 'SGD CAD (مناقشة حالات سريرية)', type: 'سكشن تفاعلي (SGD)', loc: 'المستشفى — قاعة 14', code: 'CAD' },
-      { id: 'sun_4', time: '02:15 - 03:55 م', name: 'SGT CAD (تدريس إكلينيكي)', type: 'سكشن كلينيكال (SGT)', loc: 'الأقسام والعيادات الخارجية', code: 'CAD' }
+      { id: 'sun_4', time: '02:15 - 03:55 م', name: 'SGT CAD (تدريس إكلينيكي وجولة CCU)', type: 'سكشن كلينيكال (SGT)', loc: 'الأقسام والعيادات وعناية CCU', code: 'CAD' }
     ],
     studyTarget: 'مقدمة الكارديولوجي وفسيولوجيا ورسم القلب الطبيعي (Normal ECG)'
   },
   'إثنين': {
     isCollegeDay: false,
     dayName: 'الإثنين',
-    sessions: [
-      { id: 'mon_1', time: '08:45 - 12:10 م', name: 'مراجعة ذاتية واستذكار حر لموديول القلب', type: 'مذاكرة حرة', loc: 'المكتبة / المنزل', code: 'CAD' },
-      { id: 'mon_2', time: '12:30 - 02:10 م', name: 'Open Lab معمل المهارات المفتوح', type: 'معمل مهارات (Open Lab)', loc: 'المستشفى — قاعة 1', code: 'CAD' },
-      { id: 'mon_3', time: '02:15 - 03:55 م', name: 'جلسة مذاكرة عميقة وحل كويزات الكارديو', type: 'مذاكرة وتطبيق', loc: 'المنزل', code: 'CAD' }
-    ],
-    studyTarget: 'رسم القلب وحساب المحاور والمسافات (Normal ECG Criteria)'
+    offReason: 'لا توجد دراسة أو سكاشن رسمية بالكلية اليوم (مخصص بالكلية للأنشطة الطلابية، ويوم استذكار حر لموديول القلب بالمنزل) ☕',
+    sessions: [],
+    studyTarget: 'استذكار حر لموديول القلب وتفريغ ومذاكرة محاضرات الأحد (CAD & Normal ECG)'
   },
   'ثلاثاء': {
     isCollegeDay: true,
     dayName: 'الثلاثاء',
     sessions: [
-      { id: 'tue_1', time: '08:45 - 10:25 ص', name: 'CAD Mitral Valve Diseases (أمراض الصمام الميترالي)', type: 'محاضرة مدرج', loc: 'مدرج الكلية', code: 'CAD' },
-      { id: 'tue_2', time: '10:30 - 12:10 م', name: 'PED Growth & Assessment (تقييم نمو الأطفال)', type: 'محاضرة مدرج', loc: 'مدرج الكلية', code: 'PED' },
+      { id: 'tue_1', time: '08:45 - 10:25 ص', name: 'CAD Mitral Valve Diseases (أمراض الصمام الميترالي)', type: 'محاضرة مدرج', loc: 'مبنى 3 — مدرج 3315', code: 'CAD' },
+      { id: 'tue_2', time: '10:30 - 12:10 م', name: 'PED Growth & Assessment (تقييم نمو الأطفال)', type: 'محاضرة مدرج', loc: 'مبنى 3 — مدرج 3315', code: 'PED' },
       { id: 'tue_3', time: '12:30 - 02:10 م', name: 'Alex CAD (سكشن الإسكندرية)', type: 'سكشن إكلينيكي', loc: 'المستشفى — قاعة 15', code: 'CAD' },
       { id: 'tue_4', time: '02:15 - 03:55 م', name: 'Clinical CAD (كلينيكال باطنة وقلب)', type: 'سكشن كلينيكال (Clinical)', loc: 'المستشفى — قاعة 10', code: 'CAD' }
     ],
-    studyTarget: 'أمراض الصمام الميترالي (Mitral Stenosis & Regurgitation)'
+    studyTarget: 'أمراض الصمام الميترالي (Mitral Stenosis & Regurgitation) وتقييم نمو الأطفال'
   },
   'أربعاء': {
     isCollegeDay: true,
     dayName: 'الأربعاء',
     sessions: [
-      { id: 'wed_1', time: '08:45 - 10:25 ص', name: 'PED Disorders of Physical Growth (اضطرابات النمو)', type: 'محاضرة مدرج', loc: 'مدرج الكلية', code: 'PED' },
-      { id: 'wed_2', time: '10:30 - 12:10 م', name: 'CAD Aortic Valve Diseases (أمراض الصمام الأورطي)', type: 'محاضرة مدرج', loc: 'مدرج الكلية', code: 'CAD' },
+      { id: 'wed_1', time: '08:45 - 10:25 ص', name: 'PED Disorders of Physical Growth (اضطرابات النمو)', type: 'محاضرة مدرج', loc: 'مبنى 3 — مدرج 3315', code: 'PED' },
+      { id: 'wed_2', time: '10:30 - 12:10 م', name: 'CAD Aortic Valve Diseases (أمراض الصمام الأورطي)', type: 'محاضرة مدرج', loc: 'مبنى 3 — مدرج 3315', code: 'CAD' },
       { id: 'wed_3', time: '12:30 - 02:10 م', name: 'Skill Lab 7 (معمل مهارات مجموعة 7)', type: 'معمل مهارات (Skill Lab)', loc: 'المستشفى — قاعة 4', code: 'CAD' },
       { id: 'wed_4', time: '02:15 - 03:55 م', name: 'Cases 7&8 (مناقشة حالات سريرية)', type: 'مناقشة حالات (Cases)', loc: 'مبنى 3 — قاعة 3103', code: 'CAD' }
     ],
-    studyTarget: 'أمراض الصمام الأورطي (Aortic Stenosis & Regurgitation)'
+    studyTarget: 'أمراض الصمام الأورطي (Aortic Stenosis & Regurgitation) وفحص الصدر'
   },
   'خميس': {
     isCollegeDay: true,
     dayName: 'الخميس',
     sessions: [
-      { id: 'thu_1', time: '08:45 - 10:25 ص', name: 'CAD Tricuspid & Prosthetic Valves (الصمامات)', type: 'محاضرة مدرج', loc: 'مدرج الكلية', code: 'CAD' },
-      { id: 'thu_2', time: '10:30 - 12:10 م', name: 'CAD Atherosclerosis & Dyslipidemia (التصلب والدهون)', type: 'محاضرة مدرج', loc: 'مدرج الكلية', code: 'CAD' },
+      { id: 'thu_1', time: '08:45 - 10:25 ص', name: 'CAD Tricuspid & Prosthetic Valves (الصمامات الثلاثية والصناعية)', type: 'محاضرة مدرج', loc: 'مبنى 3 — مدرج 3315', code: 'CAD' },
+      { id: 'thu_2', time: '10:30 - 12:10 م', name: 'CAD Atherosclerosis & Dyslipidemia (التصلب والدهون)', type: 'محاضرة مدرج', loc: 'مبنى 3 — مدرج 3315', code: 'CAD' },
       { id: 'thu_3', time: '12:30 - 02:10 م', name: 'SGT & SGD PED (سكشن أطفال)', type: 'سكشن أطفال (SGT & SGD)', loc: 'مبنى 2 — قاعة 2018', code: 'PED' },
       { id: 'thu_4', time: '02:15 - 03:55 م', name: 'Clinical PED (كلينيكال أطفال)', type: 'سكشن كلينيكال (Clinical)', loc: 'المستشفى — قاعة 12', code: 'PED' }
     ],
-    studyTarget: 'تصلب الشرايين والدهون والصمامات الصناعية (Prosthetic Valves)'
+    studyTarget: 'تصلب الشرايين والدهون والصمامات الصناعية وعيادات الأطفال'
+  },
+  'جمعة': {
+    isCollegeDay: false,
+    dayName: 'الجمعة المبارك',
+    offReason: 'إجازة نهاية الأسبوع الرسمية (صلاة الجمعة وسورة الكهف وراحة أسرية ومراجعة خفيفة) 🕌',
+    sessions: [],
+    studyTarget: 'راحة ذهنية ومراجعة أسبوعية متباعدة (SRS) لكويزات الأسبوع'
+  },
+  'سبت': {
+    isCollegeDay: false,
+    dayName: 'السبت',
+    offReason: 'لا توجد دراسة بالكلية (يوم التأسيس والمذاكرة العميقة بالمنزل قبل بداية الأسبوع) 👑',
+    sessions: [],
+    studyTarget: 'سبت التأسيس والمذاكرة العميقة لشباتر الكارديو وحل بنك الأسئلة والكويزات'
   }
 };
 
@@ -5862,32 +5873,30 @@ function getCairoLiveStatus() {
       rightNow = '🕌 صلاة العشاء واستراحة خفيفة لشحن التركيز.';
       nextUp = '⏰ 08:30 م: جلسة التطبيق وحل كويزات الكارديو 🩺';
     } else if (currentMins >= 1230 && currentMins < 1350) {
-      rightNow = '🩺 أنت الآن في جلسة التطبيق والأسئلة:<br>حل كويزات الكارديو ومراجعة فلاش كاردز المصطلحات.';
+      rightNow = '🩺 أنت الآن في جلسة التطبيق والأسئلة:<br>حل كويزات الكارديو ومراجعة فلاش كاردز المصطلحات الطبية.';
       nextUp = '⏰ 10:30 م: التقييم اليومي والاستعداد للنوم الصحي 🌌';
     } else {
-      rightNow = '🌌 وقت السكينة والنوم العميق: احرص على النوم لحفظ ما تعلمته وتثبيته بالذاكرة.';
-      nextUp = '⏰ غداً صباحاً: يوم دراسي جديد مليء بالإنجاز 🌅';
+      rightNow = '🌌 وقت السكينة والنوم العميق: احرص على النوم لحفظ ما تعلمته وتثبيته بالذاكرة طويلة المدى.';
+      if (todayKey === 'أحد') {
+        nextUp = '⏰ غداً الإثنين: لا توجد دراسة أو سكاشن بالكلية (إجازة رسمية للأنشطة واستذكار حر لموديول القلب بالمنزل) ☕';
+      } else if (todayKey === 'ثلاثاء') {
+        nextUp = '⏰ الأربعاء 08:45 ص: بدء اليوم الدراسي بالكلية (محاضرات نمو الأطفال وصمامات الأورطي بمدرج 3315) 🏛️';
+      } else if (todayKey === 'أربعاء') {
+        nextUp = '⏰ الخميس 08:45 ص: بدء اليوم الدراسي بالكلية (محاضرات الصمامات والتصلب والدهون بمدرج 3315) 🏛️';
+      } else if (todayKey === 'خميس') {
+        nextUp = '⏰ غداً الجمعة: إجازة رسمية مباركة (صلاة الجمعة وسورة الكهف واستراحة أسرية) 🕌';
+      }
     }
   } else if (todayKey === 'إثنين') {
-    if (currentMins < 750) {
-      rightNow = '🧪 يوم المهارات والاستذكار الحر: لا توجد محاضرات مدرج؛ فرصة لإنهاء موديول القلب.';
-      nextUp = '⏰ 12:30 م: Open Lab معمل المهارات (المستشفى — قاعة 1)';
-    } else if (currentMins >= 750 && currentMins < 850) {
-      rightNow = '🧪 أنت الآن في Open Lab معمل المهارات المفتوح (المستشفى — قاعة 1).';
-      nextUp = '⏰ 02:15 م: جلسة مذاكرة عميقة وتطبيق بالمنزل';
-    } else if (currentMins >= 855 && currentMins < 1200) {
-      rightNow = `📚 جلسة مذاكرة عميقة: <b>${todayData.studyTarget}</b>`;
-      nextUp = '⏰ 08:00 م: صلاة العشاء واستراحة';
-    } else {
-      rightNow = '🌌 وقت السكينة والنوم العميق.';
-      nextUp = '⏰ الثلاثاء 08:45 ص: محاضرات الصمامات والأطفال بالمدرج';
-    }
+    rightNow = '☕ اليوم الإثنين: لا توجد دراسة أو سكاشن رسمية بالكلية اليوم (إجازة رسمية مخصصة للأنشطة الطلابية واستذكار حر لموديول القلب بالمنزل).';
+    nextUp = '⏰ الثلاثاء 08:45 ص: بدء اليوم الدراسي بالكلية بمدرج 3315 (محاضرات الصمامات ونمو الأطفال) 🏛️';
   } else if (todayKey === 'جمعة') {
     rightNow = '🕌 يوم الجمعة المبارك: صلاة الجمعة وسورة الكهف وراحة أسرية، ومراجعة أسبوعية متباعدة (SRS).';
-    nextUp = '⏰ السبت: يوم التأسيس والمذاكرة العميقة 👑';
+    nextUp = '⏰ السبت: يوم التأسيس والمذاكرة العميقة بالمنزل (لا توجد دراسة بالكلية) 👑';
   } else {
-    rightNow = '👑 سبت التأسيس والمذاكرة العميقة: إنهاء أي متأخرات وتثبيت شباتر الكارديو قبل بداية الأسبوع.';
-    nextUp = '⏰ الأحد 08:45 ص: بداية أسبوع الكلية الجديد 🏛️';
+    // سبت
+    rightNow = '👑 سبت التأسيس والمذاكرة العميقة: إنهاء أي متأخرات وتثبيت شباتر الكارديو وحل بنوك الأسئلة بالمنزل.';
+    nextUp = '⏰ غداً الأحد 08:45 ص: بداية أسبوع الكلية الجديد بمدرج 3315 (محاضرات ومناقشات القلب) 🏛️';
   }
 
   return {
@@ -5915,19 +5924,28 @@ async function renderScheduleSection() {
 
   const statusBadge = document.getElementById('scheduleTodayStatusBadge');
   if (statusBadge) {
-    statusBadge.textContent = status.isCollegeDay ? '🏛️ دوام الكلية نشط' : '☕ استذكار حر ومراجعة';
+    statusBadge.textContent = status.isCollegeDay ? '🏛️ دوام الكلية نشط' : '☕ بدون دراسة بالكلية';
     statusBadge.className = status.isCollegeDay ? 'badge-emerald' : 'badge-gold';
   }
 
-  // 2. Update Live Radar in both Home and Schedule Tab
-  const homeRightNow = document.getElementById('homeScheduleRightNow');
+  // Update Executive KPI Stat Cards in Schedule Hub
+  const kpiCollegeStatusVal = document.getElementById('kpiCollegeStatusVal');
+  const kpiCollegeStatusSub = document.getElementById('kpiCollegeStatusSub');
+  if (kpiCollegeStatusVal) {
+    kpiCollegeStatusVal.textContent = status.isCollegeDay ? '🏛️ دوام الكلية نشط' : '☕ بدون دراسة بالكلية';
+    kpiCollegeStatusVal.style.color = status.isCollegeDay ? '#38bdf8' : '#fbbf24';
+  }
+  if (kpiCollegeStatusSub) {
+    kpiCollegeStatusSub.textContent = status.isCollegeDay 
+      ? `يوم ${status.dayFullName} • حضور مدرج وسكاشن` 
+      : `يوم ${status.dayFullName} • إجازة واستذكار حر`;
+  }
+
+  // 2. Update Live Radar in Schedule Tab
   const schedRightNow = document.getElementById('schedTabRightNow');
-  if (homeRightNow) homeRightNow.innerHTML = status.rightNow;
   if (schedRightNow) schedRightNow.innerHTML = status.rightNow;
 
-  const homeNextUp = document.getElementById('homeScheduleNextUp');
   const schedNextUp = document.getElementById('schedTabNextUp');
-  if (homeNextUp) homeNextUp.innerHTML = status.nextUp;
   if (schedNextUp) schedNextUp.innerHTML = status.nextUp;
 
   const schedStudyTarget = document.getElementById('schedTabStudyTarget');
@@ -5988,18 +6006,6 @@ async function renderScheduleSection() {
     });
   } catch (e) {}
 
-  // Update Home Alerts Bar
-  const overdueAlertText = document.getElementById('homeScheduleOverdueText');
-  if (overdueAlertText) {
-    if (overdueTasks.length > 0) {
-      overdueAlertText.innerHTML = `<span>⚠️ لديك <b>${overdueTasks.length}</b> مهمة متأخرة أو مؤجلة تحتاج حسم!</span>`;
-      overdueAlertText.style.color = '#f87171';
-    } else {
-      overdueAlertText.innerHTML = `<span>🟢 لا توجد مهام متأخرة. كل التزاماتك في التمام يا دكتور!</span>`;
-      overdueAlertText.style.color = '#34d399';
-    }
-  }
-
   // Render Schedule Pending & Overdue Tasks List
   const tasksListEl = document.getElementById('schedulePendingTasksList');
   if (tasksListEl) {
@@ -6037,7 +6043,7 @@ async function renderScheduleSection() {
   if (container) {
     let daysToRender = [];
     if (_selectedScheduleDay === 'all') {
-      daysToRender = ['أحد', 'إثنين', 'ثلاثاء', 'أربعاء', 'خميس'];
+      daysToRender = ['أحد', 'إثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'];
     } else if (G7_WEEKLY_SCHEDULE[_selectedScheduleDay]) {
       daysToRender = [_selectedScheduleDay];
     }
@@ -6046,71 +6052,85 @@ async function renderScheduleSection() {
     daysToRender.forEach(dKey => {
       const dayData = G7_WEEKLY_SCHEDULE[dKey];
       const isToday = status.dayKey === dKey;
+      const isCollege = !!dayData.isCollegeDay;
 
       cardsHtml += `
         <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid ${isToday ? '#38bdf8' : 'rgba(255, 255, 255, 0.08)'}; border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: ${isToday ? '0 0 16px rgba(56, 189, 248, 0.15)' : 'none'};">
           <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 8px;">
             <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="font-size: 1.2rem;">🗓️</span>
+              <span style="font-size: 1.2rem;">${isCollege ? '🏛️' : '☕'}</span>
               <h4 style="margin: 0; font-size: 1.05rem; color: ${isToday ? '#38bdf8' : '#fff'}; font-weight: 800;">
                 يوم ${dayData.dayName} ${isToday ? '🌟 (اليوم الحالي)' : ''}
               </h4>
+              <span style="background: ${isCollege ? 'rgba(56, 189, 248, 0.15)' : 'rgba(245, 158, 11, 0.15)'}; color: ${isCollege ? '#38bdf8' : '#fbbf24'}; border: 1px solid ${isCollege ? 'rgba(56, 189, 248, 0.3)' : 'rgba(245, 158, 11, 0.3)'}; padding: 2px 8px; border-radius: 12px; font-size: 0.74rem; font-weight: 700;">
+                ${isCollege ? 'دوام كلية رسمي' : 'بدون دراسة بالكلية / إجازة'}
+              </span>
             </div>
             <span style="color: #94a3b8; font-size: 0.8rem;">🎯 مستهدف المذاكرة: ${dayData.studyTarget}</span>
           </div>
-
-          <div style="display: flex; flex-direction: column; gap: 10px;">
       `;
 
-      dayData.sessions.forEach(sess => {
-        const attRecord = attendanceLogs.find(a => (a.session_title || '').includes(sess.name) || (a.session_title || '').includes(sess.id));
-        const attStatus = attRecord ? attRecord.status : null;
-
+      if (!isCollege || !dayData.sessions || dayData.sessions.length === 0) {
         cardsHtml += `
-          <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 10px; padding: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-            <div style="display: flex; flex-direction: column; gap: 4px;">
-              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                <span style="background: ${sess.code === 'CAD' ? '#ef4444' : '#0ea5e9'}; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; font-weight: 800;">
-                  ${sess.code}
-                </span>
-                <span style="color: #94a3b8; font-size: 0.76rem; background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px;">
-                  ${sess.type}
-                </span>
-                <b style="color: #fff; font-size: 0.95rem;">${sess.name}</b>
-              </div>
-              <div style="color: #cbd5e1; font-size: 0.82rem; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 2px;">
-                <span>⏰ <b>${sess.time}</b></span>
-                <span style="color: #34d399;">📍 <b>${sess.loc}</b></span>
-              </div>
-            </div>
-
-            <!-- Attendance Action Buttons -->
-            <div style="display: flex; align-items: center; gap: 8px;">
-              ${attStatus === 'حضور' ? `
-                <span style="background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid #10b981; padding: 4px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 700;">
-                  🟢 تم تسجيل الحضور
-                </span>
-              ` : attStatus === 'غياب' ? `
-                <span style="background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid #ef4444; padding: 4px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 700;">
-                  🔴 مسجل غياب
-                </span>
-              ` : `
-                <button type="button" onclick="toggleSessionAttendance('${sess.code}', '${sess.name}', 'حضور', '${dayData.dayName}')" style="background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34d399; padding: 5px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">
-                  ✅ سجلت الحضور
-                </button>
-                <button type="button" onclick="toggleSessionAttendance('${sess.code}', '${sess.name}', 'غياب', '${dayData.dayName}')" style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25); color: #f87171; padding: 5px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">
-                  ❌ سكشن لم أحضره
-                </button>
-              `}
+          <div style="background: rgba(30, 41, 59, 0.4); border: 1px dashed rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 18px; text-align: center;">
+            <span style="font-size: 1.8rem;">☕</span>
+            <h4 style="color: #fbbf24; margin: 8px 0 4px; font-size: 1rem;">لا توجد محاضرات أو سكاشن رسمية بالكلية اليوم</h4>
+            <p style="color: #cbd5e1; font-size: 0.85rem; margin: 0;">${dayData.offReason || 'يوم مخصص للاستذكار الحر بالمنزل والأنشطة الطلابية والراحة.'}</p>
+            <div style="margin-top: 10px; display: inline-block; background: rgba(255,255,255,0.06); padding: 4px 14px; border-radius: 8px; font-size: 0.82rem; color: #34d399;">
+              🎯 خطة المذاكرة المقترحة: <b>${dayData.studyTarget}</b>
             </div>
           </div>
         `;
-      });
+      } else {
+        cardsHtml += `<div style="display: flex; flex-direction: column; gap: 10px;">`;
+        dayData.sessions.forEach(sess => {
+          const attRecord = attendanceLogs.find(a => (a.session_title || '').includes(sess.name) || (a.session_title || '').includes(sess.id));
+          const attStatus = attRecord ? attRecord.status : null;
 
-      cardsHtml += `
-          </div>
-        </div>
-      `;
+          cardsHtml += `
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 10px; padding: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                  <span style="background: ${sess.code === 'CAD' ? '#ef4444' : '#0ea5e9'}; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; font-weight: 800;">
+                    ${sess.code}
+                  </span>
+                  <span style="color: #94a3b8; font-size: 0.76rem; background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px;">
+                    ${sess.type}
+                  </span>
+                  <b style="color: #fff; font-size: 0.95rem;">${sess.name}</b>
+                </div>
+                <div style="color: #cbd5e1; font-size: 0.82rem; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 2px;">
+                  <span>⏰ <b>${sess.time}</b></span>
+                  <span style="color: #34d399;">📍 <b>${sess.loc}</b></span>
+                </div>
+              </div>
+
+              <!-- Attendance Action Buttons -->
+              <div style="display: flex; align-items: center; gap: 8px;">
+                ${attStatus === 'حضور' ? `
+                  <span style="background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid #10b981; padding: 4px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 700;">
+                    🟢 تم تسجيل الحضور
+                  </span>
+                ` : attStatus === 'غياب' ? `
+                  <span style="background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid #ef4444; padding: 4px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 700;">
+                    🔴 مسجل غياب
+                  </span>
+                ` : `
+                  <button type="button" onclick="toggleSessionAttendance('${sess.code}', '${sess.name}', 'حضور', '${dayData.dayName}')" style="background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34d399; padding: 5px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">
+                    ✅ سجلت الحضور
+                  </button>
+                  <button type="button" onclick="toggleSessionAttendance('${sess.code}', '${sess.name}', 'غياب', '${dayData.dayName}')" style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25); color: #f87171; padding: 5px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">
+                    ❌ سكشن لم أحضره
+                  </button>
+                `}
+              </div>
+            </div>
+          `;
+        });
+        cardsHtml += `</div>`;
+      }
+
+      cardsHtml += `</div>`;
     });
 
     container.innerHTML = cardsHtml;
@@ -6126,6 +6146,8 @@ window.selectScheduleDay = function(dayKey) {
     'ثلاثاء': 'btnDayTue',
     'أربعاء': 'btnDayWed',
     'خميس': 'btnDayThu',
+    'جمعة': 'btnDayFri',
+    'سبت': 'btnDaySat',
     'all': 'btnDayAll'
   };
   Object.entries(btnIds).forEach(([k, id]) => {
