@@ -5489,8 +5489,7 @@ async function loadQuizzesPortalData(forceFresh = false) {
       let options = [];
       let correctIndex = 0;
       let explanation = row.answer_and_explanation || row.explanation || '';
-      let lastAnswerCorrect = null;
-      let lastAnsweredAt = row.last_reviewed_at || null;
+      let lastAnsweredAt = null;
       let selectedIndex = null;
       let attempts = 0;
 
@@ -5513,20 +5512,19 @@ async function loadQuizzesPortalData(forceFresh = false) {
         correctIndex = Number(row.correct_option_index || 0);
       }
 
+      // If attempts took place or level >= 1, fallback lastAnsweredAt to last_reviewed_at if null
+      if (!lastAnsweredAt && (attempts > 0 || row.repetition_level >= 1)) {
+        lastAnsweredAt = row.last_reviewed_at;
+      }
+
       // Determine accurate answer status
       let status = 'PENDING';
-      if (lastAnswerCorrect === true) {
+      if (lastAnswerCorrect === true || row.repetition_level >= 1) {
         status = 'CORRECT';
-      } else if (lastAnswerCorrect === false) {
+      } else if (lastAnswerCorrect === false || (attempts > 0 && lastAnswerCorrect === false)) {
         status = 'WRONG';
       } else {
-        if (row.repetition_level >= 1 && row.last_reviewed_at) {
-          status = 'CORRECT';
-        } else if (row.repetition_level === 0 && row.last_reviewed_at) {
-          status = 'WRONG';
-        } else {
-          status = 'PENDING';
-        }
+        status = 'PENDING';
       }
 
       return {
@@ -5629,9 +5627,9 @@ function filterQuizzesGrid() {
     if (q.status === 'CORRECT') {
       statusBadge = `<span style="background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.35); border-radius: 6px; padding: 3px 8px; font-size: 0.76rem; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">🟢 تم الحل بنجاح</span>`;
     } else if (q.status === 'WRONG') {
-      statusBadge = `<span style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 6px; padding: 3px 8px; font-size: 0.76rem; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">🔴 إجابة خاطئة (مراجعة 24h)</span>`;
+      statusBadge = `<span style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 6px; padding: 3px 8px; font-size: 0.76rem; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">🔴 إجابة خاطئة (مراجعة عاجلة)</span>`;
     } else {
-      statusBadge = `<span style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 6px; padding: 3px 8px; font-size: 0.76rem; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">⏳ قيد المراجعة</span>`;
+      statusBadge = `<span style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 6px; padding: 3px 8px; font-size: 0.76rem; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">⏳ في انتظار الحل والتثبيت</span>`;
     }
 
     // Repetition Level Badge
