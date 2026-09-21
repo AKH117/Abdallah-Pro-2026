@@ -68,7 +68,7 @@ export default async function handler(req, res) {
           menu_button: JSON.stringify({
             type: 'web_app',
             text: '📱 لوحة التحكم',
-            web_app: { url: 'https://akh117.github.io/Abdallah-Pro-2026/' }
+            web_app: { url: 'https://abdallah-pro.onrender.com/' }
           })
         }).catch(() => {});
         return res.status(200).json({
@@ -118,7 +118,7 @@ if (process.env.PORT) {
         const pathname = parsedUrl.pathname || '/';
 
         // 🌐 Static Files for Dashboard Mini App (Serve index.html, style.css, app.js)
-        if (req.method === 'GET') {
+        if (req.method === 'GET' || req.method === 'HEAD') {
           if (pathname === '/' || pathname === '/index.html') {
             try {
               const html = fs.readFileSync(path.join(rootDir, 'index.html'), 'utf8');

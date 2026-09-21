@@ -5492,6 +5492,7 @@ async function loadQuizzesPortalData(forceFresh = false) {
       let lastAnsweredAt = null;
       let selectedIndex = null;
       let attempts = 0;
+      let lastAnswerCorrect = null;
 
       if (row.doctor_pearl && row.doctor_pearl.includes('<<<QUIZ_META_START>>>')) {
         try {
