@@ -64,12 +64,21 @@ export default async function handler(req, res) {
         await bot.telegram.setWebhook(webhookUrl, {
           allowed_updates: ['message', 'edited_message', 'callback_query', 'poll', 'poll_answer']
         });
-        await bot.telegram.callApi('setChatMenuButton', {
-          menu_button: JSON.stringify({
+        await bot.telegram.setChatMenuButton({
+          menuButton: {
             type: 'web_app',
             text: '📱 لوحة التحكم',
             web_app: { url: 'https://akh117.github.io/Abdallah-Pro-2026/' }
-          })
+          }
+        }).catch(() => {});
+        const adminChatId = process.env.TELEGRAM_CHAT_ID || 1191760477;
+        await bot.telegram.setChatMenuButton({
+          chatId: Number(adminChatId),
+          menuButton: {
+            type: 'web_app',
+            text: '📱 لوحة التحكم',
+            web_app: { url: 'https://akh117.github.io/Abdallah-Pro-2026/' }
+          }
         }).catch(() => {});
         return res.status(200).json({
           status: 'success',
