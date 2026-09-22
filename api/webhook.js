@@ -232,6 +232,21 @@ if (process.env.PORT) {
           } catch (whErr) {
             console.warn('[Webhook Init Warn]:', whErr.message);
           }
+
+          try {
+            const webAppUrl = 'https://akh117.github.io/Abdallah-Pro-2026/';
+            const btnConfig = {
+              type: 'web_app',
+              text: '📱 لوحة التحكم',
+              web_app: { url: webAppUrl }
+            };
+            await bot.telegram.setChatMenuButton({ menuButton: btnConfig });
+            const adminId = Number(process.env.TELEGRAM_CHAT_ID || 1191760477);
+            await bot.telegram.setChatMenuButton({ chatId: adminId, menuButton: btnConfig });
+            console.log(`📱 [Menu Button Verified] Set to ${webAppUrl} for default and chat ${adminId}`);
+          } catch (btnErr) {
+            console.warn('[Menu Button Sync Warn]:', btnErr.message);
+          }
         }
       });
 
