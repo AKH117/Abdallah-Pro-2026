@@ -581,3 +581,50 @@ on conflict (telegram_id) do update set role = 'admin', subscription_status = 'l
 insert into public.admin_purity_recovery (telegram_id, longest_soso_streak_days, longest_bobo_streak_days, urges_resisted_count)
 values (1191760477, 0, 0, 0)
 on conflict (telegram_id) do nothing;
+
+-- ==============================================================================
+-- 💎 31. بنك التحشيشات والـ Medical Pearls (الكبسولات الذهبية للراوندات والامتحانات)
+-- ==============================================================================
+create table if not exists public.medical_mnemonics (
+  id uuid default gen_random_uuid() primary key,
+  telegram_id bigint references public.users(telegram_id) on delete cascade,
+  course_code text not null default 'CAD402',
+  topic text not null,
+  mnemonic_text text not null,
+  explanation_pearl text,
+  source text default 'voice_note', -- 'voice_note' | 'question_error' | 'manual'
+  is_favorite boolean default false,
+  times_reviewed int default 0,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+create index if not exists idx_med_mnemonics_user on public.medical_mnemonics(telegram_id);
+create index if not exists idx_med_mnemonics_course on public.medical_mnemonics(course_code);
+
+-- ==============================================================================
+-- 🩺 32. سجل تفكيك أخطاء الأسئلة الطبية (Medical Question Error Vault)
+-- ==============================================================================
+create table if not exists public.medical_error_vault (
+  id uuid default gen_random_uuid() primary key,
+  telegram_id bigint references public.users(telegram_id) on delete cascade,
+  course_code text not null default 'CAD402',
+  topic text not null,
+  question_en text not null,
+  question_ar text,
+  difficult_terms jsonb default '[]'::jsonb,
+  correct_answer text not null,
+  correct_mechanism text not null,
+  distractors jsonb default '[]'::jsonb,
+  curriculum_context text,
+  golden_tip text,
+  mnemonic_id uuid references public.medical_mnemonics(id) on delete set null,
+  mnemonic_text text,
+  repetition_level int default 0,
+  next_review_at timestamp with time zone default timezone('utc'::text, now()),
+  is_mastered boolean default false,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+create index if not exists idx_med_error_user on public.medical_error_vault(telegram_id);
+create index if not exists idx_med_error_course on public.medical_error_vault(course_code);
+

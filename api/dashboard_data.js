@@ -1,5 +1,5 @@
 // 🚀 Telegram Web App Dashboard Data API for Abdullah's Journey & Medical OS
-import { supabase, getUserProfile, getUserActiveCourses, getUserMedicalQuizzes, DEFAULT_USER_PREFERENCES, ADMIN_CHAT_ID, isAdminUser, getAdminPurityStats } from '../lib/supabase.js';
+import { supabase, getUserProfile, getUserActiveCourses, getUserMedicalQuizzes, getMedicalMnemonics, getMedicalErrorVault, DEFAULT_USER_PREFERENCES, ADMIN_CHAT_ID, isAdminUser, getAdminPurityStats } from '../lib/supabase.js';
 import { getCairoPrayerTimes } from '../lib/prayer_times.js';
 import { getRandomCuratedCapsule } from '../lib/mindset_pulses.js';
 
@@ -36,7 +36,9 @@ export default async function handler(req, res) {
       engRes,
       gymRes,
       wellRes,
-      thoughtRes
+      thoughtRes,
+      mnemonicsList,
+      errorVaultList
     ] = await Promise.all([
       getUserProfile(numId),
       getUserActiveCourses(numId),
@@ -50,7 +52,9 @@ export default async function handler(req, res) {
       supabase.from('english_spaced_flashcards').select('*').order('next_review_at', { ascending: true }).limit(20),
       supabase.from('fitness_gym_logs').select('*').order('date', { ascending: false }).limit(10),
       supabase.from('mental_wellness_logs').select('*').order('date', { ascending: false }).limit(10),
-      supabase.from('thoughts_and_wisdom').select('*').order('created_at', { ascending: false }).limit(10)
+      supabase.from('thoughts_and_wisdom').select('*').order('created_at', { ascending: false }).limit(10),
+      getMedicalMnemonics(numId).catch(() => []),
+      getMedicalErrorVault(numId).catch(() => [])
     ]);
 
     const userName = profile?.full_name || (isAdminUser(numId) ? 'د. عبدالله (المؤسس)' : 'دكتور زميل');
@@ -331,6 +335,8 @@ export default async function handler(req, res) {
       gym: userGym,
       wellness: userWellness,
       thoughts: userThoughts,
+      mnemonics: mnemonicsList || [],
+      error_vault: errorVaultList || [],
       admin: adminData,
       purity: numId === ADMIN_CHAT_ID ? await getAdminPurityStats(numId) : null
     });

@@ -81,6 +81,11 @@
           <span>سجل الأسئلة والكويزات</span>
         </button>
 
+        <button class="nav-item" data-tab="mnemonics" data-title="التحشيشات وخزانة تفكيك الأخطاء" onclick="toggleMobileSidebar(false)">
+          <span class="nav-icon">💎</span>
+          <span>التحشيشات وخزانة الأخطاء</span>
+        </button>
+
         <button class="nav-item" data-tab="english" data-title="فلاش كاردز الإنجليزية" onclick="toggleMobileSidebar(false)">
           <span class="nav-icon">🗣️</span>
           <span>فلاش كاردز الإنجليزية</span>
@@ -1024,6 +1029,100 @@
           <div id="quizzesGridContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px;">
             <div class="empty-state" style="grid-column: 1 / -1; padding: 40px; text-align: center;">
               ⏳ جاري تحميل سجل الأسئلة والكويزات من السيرفر...
+            </div>
+          </div>
+        </section>
+
+        <!-- 💎 TAB: Medical Mnemonics & 5-Point Error Vault Hub -->
+        <section class="tab-pane" id="tab-mnemonics">
+          <div class="section-title-row">
+            <div>
+              <h2>💎 بنك التحشيشات والـ Pearls وخزانة تفكيك الأخطاء 🩺</h2>
+              <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 4px 0 0;">
+                استعراض شامل لجميع التحشيشات والنيمونيك المسجلة صوتياً، وسجل تفكيك أخطاء الأسئلة بالنموذج الخماسي الشامل.
+              </p>
+            </div>
+            <div class="actions-group" style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn-primary" onclick="loadMnemonicsAndVaultData(true)">
+                🔄 تحديث البيانات
+              </button>
+            </div>
+          </div>
+
+          <!-- KPI Metrics Row -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 22px;">
+            <div class="kpi-card" style="border: 1px solid rgba(245, 158, 11, 0.35); background: rgba(15, 23, 42, 0.8);">
+              <span class="kpi-label">💎 إجمالي التحشيشات والـ Pearls</span>
+              <div class="kpi-value" id="statTotalMnemonics" style="color: #fbbf24;">0 <span class="kpi-unit">تحشيشة</span></div>
+            </div>
+            <div class="kpi-card" style="border: 1px solid rgba(16, 185, 129, 0.35); background: rgba(15, 23, 42, 0.8);">
+              <span class="kpi-label">🩺 أسئلة مفككة بالنموذج الخماسي</span>
+              <div class="kpi-value" id="statTotalErrorVault" style="color: #34d399;">0 <span class="kpi-unit">سؤال</span></div>
+            </div>
+            <div class="kpi-card" style="border: 1px solid rgba(56, 189, 248, 0.35); background: rgba(15, 23, 42, 0.8);">
+              <span class="kpi-label">🫀 موديول القلب (CAD)</span>
+              <div class="kpi-value" id="statCadItems" style="color: #38bdf8;">0 <span class="kpi-unit">عنصر</span></div>
+            </div>
+            <div class="kpi-card" style="border: 1px solid rgba(168, 85, 247, 0.35); background: rgba(15, 23, 42, 0.8);">
+              <span class="kpi-label">👶 موديول الأطفال (PED)</span>
+              <div class="kpi-value" id="statPedItems" style="color: #c084fc;">0 <span class="kpi-unit">عنصر</span></div>
+            </div>
+          </div>
+
+          <!-- Dual-view Sub-Navigation Buttons -->
+          <div style="display: flex; gap: 12px; margin-bottom: 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 12px; flex-wrap: wrap;">
+            <button type="button" class="btn-subnav active" id="subnavBtnMnemonics" onclick="switchMnemonicView('mnemonics')" style="padding: 10px 20px; border-radius: 10px; font-weight: 800; font-size: 0.95rem; border: none; cursor: pointer; transition: all 0.25s; background: linear-gradient(135deg, #f59e0b, #d97706); color: #000;">
+              💎 بنك التحشيشات والـ Pearls الطبية
+            </button>
+            <button type="button" class="btn-subnav" id="subnavBtnErrorVault" onclick="switchMnemonicView('vault')" style="padding: 10px 20px; border-radius: 10px; font-weight: 800; font-size: 0.95rem; border: 1px solid rgba(255, 255, 255, 0.15); cursor: pointer; transition: all 0.25s; background: rgba(255, 255, 255, 0.05); color: #94a3b8;">
+              🩺 خزانة تفكيك أخطاء الأسئلة (النموذج الخماسي)
+            </button>
+          </div>
+
+          <!-- Filter & Search Controls -->
+          <div class="split-card full-width-card" style="margin-bottom: 22px; padding: 16px 20px; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div style="display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end;">
+              <!-- Course Filter -->
+              <div style="flex: 1; min-width: 180px;">
+                <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 6px; font-weight: bold;">
+                  🩺 المقرر / الموديول الطبي:
+                </label>
+                <select id="mnemonicFilterCourse" class="form-input" style="width: 100%; padding: 9px 12px; font-size: 0.88rem; background: #0f172a; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff;" onchange="filterMnemonicsAndVault()">
+                  <option value="ALL">🌟 جميع الموديولات الطبية (الكل)</option>
+                  <option value="CAD">🫀 موديول أمراض القلب (Cardiology CAD402)</option>
+                  <option value="PED">👶 موديول طب الأطفال (Pediatrics PED401)</option>
+                  <option value="RSD">🫁 موديول الصدرية والتنفسي (Respiratory)</option>
+                  <option value="GIT">🍽️ موديول الجهاز الهضمي (GIT)</option>
+                  <option value="NEURO">🧠 موديول الجهاز العصبي (Neuro)</option>
+                  <option value="GEN">🩺 باطنة عامة وطب شامل (General)</option>
+                </select>
+              </div>
+
+              <!-- Search Input -->
+              <div style="flex: 2; min-width: 250px;">
+                <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 6px; font-weight: bold;">
+                  🔍 بحث فوري:
+                </label>
+                <input type="text" id="mnemonicSearchInput" class="form-input" placeholder="اكتب للبحث في نص التحشيشة، السؤال، التشخيص، أو الزتونة بالمصري..." style="width: 100%; padding: 9px 14px; font-size: 0.88rem; background: #0f172a; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff;" oninput="filterMnemonicsAndVault()" />
+              </div>
+            </div>
+          </div>
+
+          <!-- View 1: Mnemonics Cards Grid -->
+          <div id="mnemonicsViewContainer">
+            <div id="mnemonicsCardsContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 18px;">
+              <div class="empty-state" style="grid-column: 1 / -1; padding: 40px; text-align: center;">
+                ⏳ جاري تحميل بنك التحشيشات الطبية...
+              </div>
+            </div>
+          </div>
+
+          <!-- View 2: 5-Point Error Vault Questions Grid -->
+          <div id="errorVaultViewContainer" style="display: none;">
+            <div id="errorVaultCardsContainer" style="display: flex; flex-direction: column; gap: 20px;">
+              <div class="empty-state" style="padding: 40px; text-align: center;">
+                ⏳ جاري تحميل خزانة أخطاء الأسئلة...
+              </div>
             </div>
           </div>
         </section>
