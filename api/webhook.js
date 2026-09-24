@@ -196,7 +196,8 @@ if (process.env.PORT) {
         if (pathname === '/api/version') {
           return res.status(200).json({
             ok: true,
-            version: '3.0.0-StrictClean-Medical-English-WorshipOnly',
+            version: '3.1.0-Sync-Live-AutoDeploy',
+            commit: 'test-auto-deploy',
             timestamp: new Date().toISOString()
           });
         }

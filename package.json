@@ -1,6 +1,6 @@
 {
   "name": "abdullah-journey-os",
-  "version": "1.0.0",
+  "version": "3.1.0",
   "description": "منظومة رحلة عبدالله - إدارة الحياة الفائقة، الطب، القرآن، الإنجليزية، والعادات الذكية",
   "main": "api/webhook.js",
   "type": "module",
