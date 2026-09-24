@@ -5766,27 +5766,25 @@ function switchMnemonicView(view) {
 
   if (view === 'mnemonics') {
     if (btnMnemonics) {
-      btnMnemonics.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+      btnMnemonics.classList.add('active-gold');
+      btnMnemonics.classList.remove('active-teal');
       btnMnemonics.style.color = '#000';
-      btnMnemonics.style.border = 'none';
     }
     if (btnVault) {
-      btnVault.style.background = 'rgba(255, 255, 255, 0.05)';
+      btnVault.classList.remove('active-teal', 'active-gold');
       btnVault.style.color = '#94a3b8';
-      btnVault.style.border = '1px solid rgba(255, 255, 255, 0.15)';
     }
     if (viewMnemonics) viewMnemonics.style.display = 'block';
     if (viewVault) viewVault.style.display = 'none';
   } else {
     if (btnVault) {
-      btnVault.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+      btnVault.classList.add('active-teal');
+      btnVault.classList.remove('active-gold');
       btnVault.style.color = '#fff';
-      btnVault.style.border = 'none';
     }
     if (btnMnemonics) {
-      btnMnemonics.style.background = 'rgba(255, 255, 255, 0.05)';
+      btnMnemonics.classList.remove('active-gold', 'active-teal');
       btnMnemonics.style.color = '#94a3b8';
-      btnMnemonics.style.border = '1px solid rgba(255, 255, 255, 0.15)';
     }
     if (viewMnemonics) viewMnemonics.style.display = 'none';
     if (viewVault) viewVault.style.display = 'block';
@@ -6020,17 +6018,32 @@ function filterMnemonicsAndVault() {
   renderErrorVaultGrid(filteredVault);
 }
 
+function copyMnemonicById(id) {
+  const item = (window._ALL_MNEMONICS || []).find(m => String(m.id) === String(id));
+  if (!item || !item.mnemonic_text) return;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(item.mnemonic_text).then(() => {
+      alert('تم نسخ التحشيشة بنجاح! 📋✨');
+    }).catch(() => {
+      prompt('انسخ التحشيشة من هنا:', item.mnemonic_text);
+    });
+  } else {
+    prompt('انسخ التحشيشة من هنا:', item.mnemonic_text);
+  }
+}
+window.copyMnemonicById = copyMnemonicById;
+
 function renderMnemonicsGrid(items) {
   const container = document.getElementById('mnemonicsCardsContainer');
   if (!container) return;
 
   if (!items || items.length === 0) {
     container.innerHTML = `
-      <div class="empty-state" style="grid-column: 1 / -1; padding: 50px 20px; text-align: center; background: rgba(15, 23, 42, 0.4); border-radius: 14px; border: 1px dashed rgba(255, 255, 255, 0.1);">
-        <div style="font-size: 2.5rem; margin-bottom: 10px;">💎</div>
-        <h4 style="color: #fbbf24; margin-bottom: 6px;">لا توجد تحشيشات أو Pearls مسجلة حتى الآن</h4>
-        <p style="color: var(--text-secondary); font-size: 0.85rem; max-width: 480px; margin: 0 auto;">
-          سجل فويس في تليجرام يبدأ بـ "سجل تحشيشة..." أو أرسل الشرح الخماسي للسؤال وسيتم استخراج وتوثيق النيمونيك هنا تلقائياً! 🚀
+      <div class="empty-state" style="grid-column: 1 / -1; padding: 40px 16px; text-align: center; background: rgba(15, 23, 42, 0.4); border-radius: 14px; border: 1px dashed rgba(255, 255, 255, 0.1);">
+        <div style="font-size: 2.5rem; margin-bottom: 8px;">💎</div>
+        <h4 style="color: #fbbf24; margin-bottom: 6px; font-size: 1.05rem;">لا توجد تحشيشات أو Pearls مسجلة حتى الآن</h4>
+        <p style="color: var(--text-secondary); font-size: 0.82rem; max-width: 440px; margin: 0 auto; line-height: 1.5;">
+          سجل فويس في تليجرام يبدأ بـ "سجل تحشيشة..." أو أرسل الشرح الخماسي للسؤال وسيتم توثيق النيمونيك هنا تلقائياً! 🚀
         </p>
       </div>
     `;
@@ -6043,32 +6056,32 @@ function renderMnemonicsGrid(items) {
     const cleanTopic = (m.topic || 'مفهوم طبي').replace(/\[.*?\]/g, '').trim();
 
     return `
-      <div class="kpi-card" style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(20, 30, 48, 0.85)); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 8px 25px rgba(0,0,0,0.3); position: relative; overflow: hidden;">
-        <div style="position: absolute; top: 0; right: 0; left: 0; height: 3px; background: linear-gradient(90deg, #f59e0b, #10b981);"></div>
+      <div class="mnemonic-card">
+        <div class="mnemonic-glow-bar"></div>
         <div>
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
             <span class="badge-gold" style="font-size: 0.75rem; padding: 3px 8px; border-radius: 6px; font-weight: bold; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); color: #fbbf24;">
               🩺 [${course}]
             </span>
-            <span style="font-size: 0.75rem; color: var(--text-secondary);">${dateStr}</span>
+            <span style="font-size: 0.74rem; color: var(--text-secondary);">${dateStr}</span>
           </div>
 
-          <h3 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin-bottom: 12px; line-height: 1.4;">
+          <h3 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin-bottom: 10px; line-height: 1.4;">
             ${cleanTopic}
           </h3>
 
           <!-- Glowing Mnemonic Box -->
-          <div style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15);">
+          <div class="mnemonic-hook-box">
             <div style="font-size: 0.75rem; font-weight: 800; color: #fbbf24; margin-bottom: 4px; display: flex; align-items: center; gap: 5px;">
               <span>💎 التحشيشة / Mnemonic Hook:</span>
             </div>
-            <div style="font-size: 0.98rem; font-weight: 900; color: #fef08a; line-height: 1.5; white-space: pre-wrap;">
+            <div class="mnemonic-hook-text" style="font-size: 0.98rem; font-weight: 900; color: #fef08a; line-height: 1.5; white-space: pre-wrap;">
               ${m.mnemonic_text || 'تحشيشة سريرية'}
             </div>
           </div>
 
           ${m.explanation_pearl ? `
-            <div style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.6; margin-bottom: 10px; background: rgba(255, 255, 255, 0.03); padding: 10px 12px; border-radius: 8px; border-right: 3px solid #10b981;">
+            <div class="mnemonic-pearl-text" style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.6; margin-bottom: 10px; background: rgba(255, 255, 255, 0.03); padding: 10px 12px; border-radius: 8px; border-right: 3px solid #10b981;">
               <b style="color: #34d399; font-size: 0.78rem; display: block; margin-bottom: 3px;">💡 التفسير والزتونة السريرية:</b>
               ${m.explanation_pearl}
             </div>
@@ -6076,9 +6089,9 @@ function renderMnemonicsGrid(items) {
         </div>
 
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.08); font-size: 0.75rem; color: var(--text-secondary);">
-          <span>🏷️ المصدر: ${m.source === 'voice_note' ? '🎙️ فويس نوت' : (m.source === 'question_error' ? '🩺 تفكيك سؤال' : '✨ يدوي')}</span>
-          <button type="button" onclick="navigator.clipboard.writeText('${(m.mnemonic_text || '').replace(/'/g, "\\'")}'); alert('تم نسخ التحشيشة بنجاح! 📋✨');" style="background: none; border: none; color: #38bdf8; cursor: pointer; font-size: 0.78rem; display: flex; align-items: center; gap: 4px;">
-            <span>📋 نسخ النيمونيك</span>
+          <span>🏷️ ${m.source === 'voice_note' ? '🎙️ فويس نوت' : (m.source === 'question_error' ? '🩺 تفكيك سؤال' : '✨ يدوي')}</span>
+          <button type="button" onclick="copyMnemonicById('${m.id}')" style="background: none; border: none; color: #38bdf8; cursor: pointer; font-size: 0.78rem; display: flex; align-items: center; gap: 4px; padding: 4px 6px;">
+            <span>📋 نسخ التحشيشة</span>
           </button>
         </div>
       </div>
@@ -6092,10 +6105,10 @@ function renderErrorVaultGrid(items) {
 
   if (!items || items.length === 0) {
     container.innerHTML = `
-      <div class="empty-state" style="padding: 50px 20px; text-align: center; background: rgba(15, 23, 42, 0.4); border-radius: 14px; border: 1px dashed rgba(255, 255, 255, 0.1);">
-        <div style="font-size: 2.5rem; margin-bottom: 10px;">🩺</div>
-        <h4 style="color: #34d399; margin-bottom: 6px;">خزانة أخطاء الأسئلة نظيفة تماماً</h4>
-        <p style="color: var(--text-secondary); font-size: 0.85rem; max-width: 480px; margin: 0 auto;">
+      <div class="empty-state" style="padding: 40px 16px; text-align: center; background: rgba(15, 23, 42, 0.4); border-radius: 14px; border: 1px dashed rgba(255, 255, 255, 0.1);">
+        <div style="font-size: 2.5rem; margin-bottom: 8px;">🩺</div>
+        <h4 style="color: #34d399; margin-bottom: 6px; font-size: 1.05rem;">خزانة أخطاء الأسئلة نظيفة تماماً</h4>
+        <p style="color: var(--text-secondary); font-size: 0.82rem; max-width: 440px; margin: 0 auto; line-height: 1.5;">
           عندما تحل سؤالاً وتخطئ فيه وتشرحه مع الذكاء الاصطناعي بالنموذج الخماسي، أعد توجيهه للبوت ليتم تفكيكه وحفظه هنا بالتفصيل! 🎯
         </p>
       </div>
@@ -6108,62 +6121,62 @@ function renderErrorVaultGrid(items) {
     const dateStr = v.created_at ? new Date(v.created_at).toLocaleDateString('ar-EG', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
 
     return `
-      <div class="split-card full-width-card" style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 16px; padding: 22px 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); margin-bottom: 18px;">
+      <div class="vault-card">
         <!-- Card Header -->
-        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <span style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 0.8rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff; padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.78rem;">
               [${course}]
             </span>
-            <h3 style="font-size: 1.15rem; font-weight: 800; color: #fff; margin: 0;">
+            <h3 style="font-size: 1.1rem; font-weight: 800; color: #fff; margin: 0;">
               ${v.topic || `سؤال سريري #${idx + 1}`}
             </h3>
           </div>
-          <span style="font-size: 0.78rem; color: var(--text-secondary);">${dateStr}</span>
+          <span style="font-size: 0.74rem; color: var(--text-secondary);">${dateStr}</span>
         </div>
 
         <!-- Clinical Scenario (English) -->
-        <div style="background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
-          <div style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: #38bdf8; letter-spacing: 0.5px; margin-bottom: 6px;">
+        <div class="vault-scenario-box" style="background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 14px; margin-bottom: 14px;">
+          <div style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: #38bdf8; letter-spacing: 0.5px; margin-bottom: 6px;">
             📋 Clinical Vignette / Scenario:
           </div>
-          <div style="font-size: 0.95rem; color: #e2e8f0; line-height: 1.6; font-family: var(--font-en, sans-serif); direction: ltr; text-align: left;">
+          <div style="font-size: 0.92rem; color: #e2e8f0; line-height: 1.6; font-family: var(--font-en, sans-serif); direction: ltr; text-align: left;">
             ${v.question_en || 'Clinical question'}
           </div>
         </div>
 
         <!-- 5-Point Structural Breakdown Pills -->
-        <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
 
           <!-- Part 1: Arabic Translation & Difficult Terms -->
           ${(v.question_ar || (Array.isArray(v.difficult_terms) && v.difficult_terms.length > 0)) ? `
-            <div style="background: rgba(30, 41, 59, 0.6); border-right: 4px solid #38bdf8; border-radius: 8px; padding: 12px 14px;">
+            <div class="vault-pill-step" style="background: rgba(30, 41, 59, 0.6); border-right: 4px solid #38bdf8; border-radius: 8px; padding: 12px 14px;">
               <b style="color: #38bdf8; font-size: 0.85rem; display: block; margin-bottom: 4px;">📝 1. ترجمة رأس السؤال والمصطلحات الصعبة:</b>
-              ${v.question_ar ? `<p style="font-size: 0.9rem; color: #cbd5e1; margin-bottom: 6px; line-height: 1.5;">${v.question_ar}</p>` : ''}
+              ${v.question_ar ? `<p style="font-size: 0.88rem; color: #cbd5e1; margin-bottom: 6px; line-height: 1.5;">${v.question_ar}</p>` : ''}
               ${Array.isArray(v.difficult_terms) && v.difficult_terms.length > 0 ? `
                 <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px;">
-                  ${v.difficult_terms.map(t => `<span style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); color: #7dd3fc; padding: 2px 8px; border-radius: 6px; font-size: 0.78rem;">${t}</span>`).join('')}
+                  ${v.difficult_terms.map(t => `<span style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); color: #7dd3fc; padding: 2px 8px; border-radius: 6px; font-size: 0.76rem;">${t}</span>`).join('')}
                 </div>
               ` : ''}
             </div>
           ` : ''}
 
           <!-- Part 2: Correct Answer & Mechanism -->
-          <div style="background: rgba(16, 185, 129, 0.08); border-right: 4px solid #10b981; border-radius: 8px; padding: 12px 14px;">
+          <div class="vault-pill-step" style="background: rgba(16, 185, 129, 0.08); border-right: 4px solid #10b981; border-radius: 8px; padding: 12px 14px;">
             <b style="color: #34d399; font-size: 0.85rem; display: block; margin-bottom: 4px;">🟢 2. الإجابة الصحيحة ولماذا هي صحيحة:</b>
-            <div style="font-size: 0.95rem; font-weight: 800; color: #a7f3d0; margin-bottom: 4px;">
+            <div style="font-size: 0.92rem; font-weight: 800; color: #a7f3d0; margin-bottom: 4px;">
               ✅ ${v.correct_answer || 'الإجابة الصحيحة'}
             </div>
-            ${v.correct_mechanism ? `<p style="font-size: 0.88rem; color: #d1fae5; line-height: 1.6; margin: 0; white-space: pre-wrap;">${v.correct_mechanism}</p>` : ''}
+            ${v.correct_mechanism ? `<p style="font-size: 0.86rem; color: #d1fae5; line-height: 1.6; margin: 0; white-space: pre-wrap;">${v.correct_mechanism}</p>` : ''}
           </div>
 
-          <!-- Part 3: Distractors Breakdown (Why each wrong answer is wrong) -->
+          <!-- Part 3: Distractors Breakdown -->
           ${Array.isArray(v.distractors) && v.distractors.length > 0 ? `
-            <div style="background: rgba(239, 68, 68, 0.08); border-right: 4px solid #f43f5e; border-radius: 8px; padding: 12px 14px;">
+            <div class="vault-pill-step" style="background: rgba(239, 68, 68, 0.08); border-right: 4px solid #f43f5e; border-radius: 8px; padding: 12px 14px;">
               <b style="color: #f87171; font-size: 0.85rem; display: block; margin-bottom: 6px;">🔴 3. تفكيك المشتتات الخاطئة (ليه كل إجابة تانية غلط):</b>
               <div style="display: flex; flex-direction: column; gap: 8px;">
                 ${v.distractors.map(d => `
-                  <div style="font-size: 0.86rem; color: #fecaca; line-height: 1.5; padding: 6px 10px; background: rgba(0, 0, 0, 0.2); border-radius: 6px;">
+                  <div style="font-size: 0.85rem; color: #fecaca; line-height: 1.5; padding: 6px 10px; background: rgba(0, 0, 0, 0.2); border-radius: 6px;">
                     <b style="color: #fca5a5;">❌ ${d.option || ''}:</b> ${d.reason || ''}
                   </div>
                 `).join('')}
@@ -6173,17 +6186,17 @@ function renderErrorVaultGrid(items) {
 
           <!-- Part 4: Curriculum Context -->
           ${v.curriculum_context ? `
-            <div style="background: rgba(99, 102, 241, 0.08); border-right: 4px solid #818cf8; border-radius: 8px; padding: 12px 14px;">
+            <div class="vault-pill-step" style="background: rgba(99, 102, 241, 0.08); border-right: 4px solid #818cf8; border-radius: 8px; padding: 12px 14px;">
               <b style="color: #a5b4fc; font-size: 0.85rem; display: block; margin-bottom: 4px;">📖 4. السياق المنهجي المحيط بالحالة:</b>
-              <p style="font-size: 0.88rem; color: #e0e7ff; line-height: 1.6; margin: 0; white-space: pre-wrap;">${v.curriculum_context}</p>
+              <p style="font-size: 0.86rem; color: #e0e7ff; line-height: 1.6; margin: 0; white-space: pre-wrap;">${v.curriculum_context}</p>
             </div>
           ` : ''}
 
           <!-- Part 5: Golden Tip & Mnemonic -->
           ${v.golden_tip ? `
-            <div style="background: rgba(245, 158, 11, 0.12); border-right: 4px solid #f59e0b; border-radius: 8px; padding: 14px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.12);">
-              <b style="color: #fbbf24; font-size: 0.9rem; display: block; margin-bottom: 6px;">💡 5. النصيحة الذهبية والتحشيشة (Golden Pearl & Mnemonic):</b>
-              <div style="font-size: 0.95rem; font-weight: 800; color: #fef08a; line-height: 1.6; white-space: pre-wrap;">
+            <div class="vault-pill-step" style="background: rgba(245, 158, 11, 0.12); border-right: 4px solid #f59e0b; border-radius: 8px; padding: 14px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.12);">
+              <b style="color: #fbbf24; font-size: 0.88rem; display: block; margin-bottom: 6px;">💡 5. النصيحة الذهبية والتحشيشة (Golden Pearl & Mnemonic):</b>
+              <div style="font-size: 0.92rem; font-weight: 800; color: #fef08a; line-height: 1.6; white-space: pre-wrap;">
                 ${v.golden_tip}
               </div>
             </div>

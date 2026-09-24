@@ -1050,7 +1050,7 @@
           </div>
 
           <!-- KPI Metrics Row -->
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 22px;">
+          <div class="mnemonics-kpi-grid">
             <div class="kpi-card" style="border: 1px solid rgba(245, 158, 11, 0.35); background: rgba(15, 23, 42, 0.8);">
               <span class="kpi-label">💎 إجمالي التحشيشات والـ Pearls</span>
               <div class="kpi-value" id="statTotalMnemonics" style="color: #fbbf24;">0 <span class="kpi-unit">تحشيشة</span></div>
@@ -1070,18 +1070,18 @@
           </div>
 
           <!-- Dual-view Sub-Navigation Buttons -->
-          <div style="display: flex; gap: 12px; margin-bottom: 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 12px; flex-wrap: wrap;">
-            <button type="button" class="btn-subnav active" id="subnavBtnMnemonics" onclick="switchMnemonicView('mnemonics')" style="padding: 10px 20px; border-radius: 10px; font-weight: 800; font-size: 0.95rem; border: none; cursor: pointer; transition: all 0.25s; background: linear-gradient(135deg, #f59e0b, #d97706); color: #000;">
-              💎 بنك التحشيشات والـ Pearls الطبية
+          <div class="mnemonics-subnav-bar">
+            <button type="button" class="btn-mnemonics-subnav active-gold" id="subnavBtnMnemonics" onclick="switchMnemonicView('mnemonics')">
+              💎 بنك التحشيشات والـ Pearls
             </button>
-            <button type="button" class="btn-subnav" id="subnavBtnErrorVault" onclick="switchMnemonicView('vault')" style="padding: 10px 20px; border-radius: 10px; font-weight: 800; font-size: 0.95rem; border: 1px solid rgba(255, 255, 255, 0.15); cursor: pointer; transition: all 0.25s; background: rgba(255, 255, 255, 0.05); color: #94a3b8;">
-              🩺 خزانة تفكيك أخطاء الأسئلة (النموذج الخماسي)
+            <button type="button" class="btn-mnemonics-subnav" id="subnavBtnErrorVault" onclick="switchMnemonicView('vault')">
+              🩺 تفكيك الأخطاء الخماسي
             </button>
           </div>
 
           <!-- Filter & Search Controls -->
-          <div class="split-card full-width-card" style="margin-bottom: 22px; padding: 16px 20px; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.1);">
-            <div style="display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end;">
+          <div class="mnemonics-filter-box">
+            <div class="mnemonics-filter-row">
               <!-- Course Filter -->
               <div style="flex: 1; min-width: 180px;">
                 <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 6px; font-weight: bold;">
@@ -1110,7 +1110,7 @@
 
           <!-- View 1: Mnemonics Cards Grid -->
           <div id="mnemonicsViewContainer">
-            <div id="mnemonicsCardsContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 18px;">
+            <div id="mnemonicsCardsContainer" class="mnemonics-cards-grid">
               <div class="empty-state" style="grid-column: 1 / -1; padding: 40px; text-align: center;">
                 ⏳ جاري تحميل بنك التحشيشات الطبية...
               </div>
@@ -1119,7 +1119,7 @@
 
           <!-- View 2: 5-Point Error Vault Questions Grid -->
           <div id="errorVaultViewContainer" style="display: none;">
-            <div id="errorVaultCardsContainer" style="display: flex; flex-direction: column; gap: 20px;">
+            <div id="errorVaultCardsContainer" style="display: flex; flex-direction: column; gap: 16px;">
               <div class="empty-state" style="padding: 40px; text-align: center;">
                 ⏳ جاري تحميل خزانة أخطاء الأسئلة...
               </div>
