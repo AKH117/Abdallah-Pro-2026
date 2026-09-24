@@ -13,4 +13,4 @@ jobs:
       - name: Trigger Abdullah's Journey OS Scheduler
         run: |
           echo "Triggering Render & Cloud Cron Endpoint..."
-          curl -s -X GET "https://abdallah-pro.onrender.com/api/cron" || echo "Render Cron triggered"
+          curl -s -X GET "https://abdallah-pro-2026.onrender.com/api/cron" || echo "Render Cron triggered"
