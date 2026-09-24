@@ -5956,15 +5956,81 @@ async function loadMnemonicsAndVaultData(forceFresh = false) {
       }
     } catch (_) {}
 
-    window._ALL_MNEMONICS = mnemonicsList;
-    window._ALL_ERROR_VAULT = errorVaultList;
+    // Deduplicate Mnemonics (by normalized text & topic)
+    const seenMnemonicKeys = new Set();
+    const uniqueMnemonics = [];
+    const cleanNormMnemonic = (str) => {
+      if (!str) return '';
+      return String(str)
+        .replace(/[\u064B-\u065F\u0670]/g, '')
+        .replace(/[أإآ]/g, 'ا')
+        .replace(/ة/g, 'ه')
+        .replace(/ى/g, 'ي')
+        .replace(/بـ\s*/g, 'ب')
+        .replace(/:\s*(?:يعني|وده|علشان|عشان|أي)[\s\S]*/, '')
+        .replace(/[^\p{L}\p{N}]/gu, '')
+        .toLowerCase();
+    };
+
+    mnemonicsList.forEach(item => {
+      // Clean trailing colon explanation if any
+      if (item.mnemonic_text && typeof item.mnemonic_text === 'string') {
+        const m = item.mnemonic_text.match(/^(.*?)(?::\s*(?:يعني|وده|علشان|عشان|أي)\s*([\s\S]*))$/);
+        if (m) {
+          item.mnemonic_text = m[1].trim();
+          if (!item.explanation_pearl && m[2]) {
+            item.explanation_pearl = m[2].trim();
+          }
+        }
+      }
+
+      const normTxt = cleanNormMnemonic(item.mnemonic_text);
+      const normTopic = cleanNormMnemonic(item.topic);
+      const key = (normTxt.slice(0, 25) || normTopic);
+      if (!key) {
+        uniqueMnemonics.push(item);
+        return;
+      }
+      if (!seenMnemonicKeys.has(key)) {
+        seenMnemonicKeys.add(key);
+        uniqueMnemonics.push(item);
+      } else {
+        const existing = uniqueMnemonics.find(m => (cleanNormMnemonic(m.mnemonic_text).slice(0, 25) || cleanNormMnemonic(m.topic)) === key);
+        if (existing) {
+          if ((!existing.explanation_pearl || existing.explanation_pearl.length < (item.explanation_pearl || '').length)) {
+            existing.explanation_pearl = item.explanation_pearl;
+          }
+          if (existing.source === 'voice_note' && item.source === 'question_error') {
+            existing.source = item.source;
+          }
+        }
+      }
+    });
+
+    // Deduplicate Error Vault
+    const seenVaultKeys = new Set();
+    const uniqueVault = [];
+    errorVaultList.forEach(item => {
+      const qKey = (item.question_en || item.question_ar || item.topic || '').replace(/[^\p{L}\p{N}]/gu, '').toLowerCase().slice(0, 45);
+      if (!qKey) {
+        uniqueVault.push(item);
+        return;
+      }
+      if (!seenVaultKeys.has(qKey)) {
+        seenVaultKeys.add(qKey);
+        uniqueVault.push(item);
+      }
+    });
+
+    window._ALL_MNEMONICS = uniqueMnemonics;
+    window._ALL_ERROR_VAULT = uniqueVault;
 
     // Update KPI Counters
     const statMnemonics = document.getElementById('statTotalMnemonics');
-    if (statMnemonics) statMnemonics.textContent = mnemonicsList.length;
+    if (statMnemonics) statMnemonics.textContent = uniqueMnemonics.length;
 
     const statVault = document.getElementById('statTotalErrorVault');
-    if (statVault) statVault.textContent = errorVaultList.length;
+    if (statVault) statVault.textContent = uniqueVault.length;
 
     const cadCount = mnemonicsList.filter(m => (m.course_code || '').includes('CAD')).length +
                      errorVaultList.filter(v => (v.course_code || '').includes('CAD')).length;
