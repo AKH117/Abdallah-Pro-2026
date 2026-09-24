@@ -560,12 +560,30 @@
         <section class="tab-pane" id="tab-schedule">
           <div class="section-title-row">
             <div>
-              <h2>📅 قسم جدولي وإدارة السكاشن • د. عبدالله (جروب 7) 🏛️✨</h2>
+              <h2 id="scheduleHeaderTitle">📅 قسم جدولي وإدارة السكاشن • د. عبدالله (جروب 7) 🏛️✨</h2>
               <p style="margin: 4px 0 0; color: var(--text-secondary); font-size: 0.85rem;">
                 المنظومة الأكاديمية المتكاملة لإدارة دوام الكلية، قاعات السكاشن الرسمية، رصد الغياب والتعويض، والمهام المؤجلة
               </p>
             </div>
-            <div class="actions-group">
+            <div class="actions-group" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+              <select id="scheduleGroupSelect" onchange="onScheduleGroupChange(this.value)" style="background: rgba(30, 41, 59, 0.8); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); padding: 4px 10px; border-radius: 8px; font-weight: 700; font-size: 0.82rem; outline: none; cursor: pointer;">
+                <option value="جروب 1">جروب 1</option>
+                <option value="جروب 2">جروب 2</option>
+                <option value="جروب 3">جروب 3</option>
+                <option value="جروب 4">جروب 4</option>
+                <option value="جروب 5">جروب 5</option>
+                <option value="جروب 6">جروب 6</option>
+                <option value="جروب 7" selected>جروب 7 (د. عبدالله)</option>
+                <option value="جروب 8">جروب 8</option>
+                <option value="جروب 9">جروب 9</option>
+                <option value="جروب 10">جروب 10</option>
+                <option value="جروب 11">جروب 11</option>
+                <option value="جروب 12">جروب 12</option>
+                <option value="جروب 13">جروب 13</option>
+                <option value="جروب 14">جروب 14</option>
+                <option value="جروب 15">جروب 15</option>
+                <option value="جروب 16">جروب 16</option>
+              </select>
               <span class="badge-gold" id="scheduleLiveClock">⏰ جاري تحميل التوقيت...</span>
             </div>
           </div>
@@ -668,7 +686,7 @@
               <div style="display: flex; align-items: center; gap: 10px;">
                 <span style="font-size: 1.5rem;">🏛️</span>
                 <div>
-                  <h3 style="margin: 0; font-size: 1.18rem; color: #fff; font-weight: 800;">جدول الأسبوع الرسمي لـ جروب 7 (Group 7 - Block 7)</h3>
+                  <h3 id="scheduleWeekSubTitle" style="margin: 0; font-size: 1.18rem; color: #fff; font-weight: 800;">جدول الأسبوع الرسمي لـ جروب 7 (Group 7 - Block 7)</h3>
                   <p style="margin: 2px 0 0; color: var(--text-secondary); font-size: 0.8rem;">
                     قاعات الكلية المعتمدة (المستشفى ومبنى 2 ومبنى 3) • اختر اليوم لعرض تفاصيله وتسجيل الحضور
                   </p>
@@ -2230,6 +2248,8 @@
     </div>
   </div>
 
+  <!-- Official College Timetable Module (Groups 1-16) -->
+  <script src="college_schedules_browser.js"></script>
   <!-- Universal Dashboard Controller (Works seamlessly on file:/// and https://) -->
   <script src="app.js"></script>
 </body>

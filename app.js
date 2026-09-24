@@ -6353,6 +6353,66 @@ const G7_WEEKLY_SCHEDULE = {
 };
 
 let _selectedScheduleDay = 'all';
+let _currentAcademicGroup = 'جروب 7';
+let _userGroupLoaded = false;
+
+function getActiveWeeklySchedule(userGroup = null) {
+  const targetGroup = userGroup || _currentAcademicGroup || 'جروب 7';
+  if (typeof window !== 'undefined' && window.getScheduleForGroup) {
+    const rawSch = window.getScheduleForGroup(targetGroup);
+    if (rawSch) {
+      const dayKeysMap = {
+        'أحد': 'الأحد',
+        'إثنين': 'الإثنين',
+        'ثلاثاء': 'الثلاثاء',
+        'أربعاء': 'الأربعاء',
+        'خميس': 'الخميس',
+        'جمعة': 'الجمعة',
+        'سبت': 'السبت'
+      };
+      const mapped = {};
+      for (const [shortKey, fullDay] of Object.entries(dayKeysMap)) {
+        const d = rawSch[fullDay] || rawSch[shortKey];
+        if (d && d.isCollegeDay) {
+          mapped[shortKey] = {
+            isCollegeDay: true,
+            dayName: d.day || fullDay,
+            studyTarget: d.studyTarget || 'مذاكرة وتثبيت مقرر اليوم',
+            sessions: [
+              { id: `${shortKey}_1`, time: d.l1?.time || '08:45 - 10:25 ص', name: d.l1?.name || '', type: 'محاضرة مدرج', loc: d.l1?.loc || 'مبنى 3 — مدرج 3315', code: d.l1?.code || 'CAD' },
+              { id: `${shortKey}_2`, time: d.l2?.time || '10:30 - 12:10 م', name: d.l2?.name || '', type: 'محاضرة مدرج', loc: d.l2?.loc || 'مبنى 3 — مدرج 3315', code: d.l2?.code || 'CAD' },
+              { id: `${shortKey}_3`, time: d.s1?.time || '12:30 - 02:10 م', name: d.s1?.name || '', type: 'سكشن / راوند', loc: d.s1?.loc || '', code: 'CAD/PED' },
+              { id: `${shortKey}_4`, time: d.s2?.time || '02:15 - 03:55 م', name: d.s2?.name || '', type: 'سكشن / راوند', loc: d.s2?.loc || '', code: 'CAD/PED' }
+            ]
+          };
+        } else {
+          mapped[shortKey] = {
+            isCollegeDay: false,
+            dayName: d?.day || fullDay,
+            offReason: d?.offReason || 'لا توجد دراسة أو سكاشن رسمية بالكلية اليوم.',
+            sessions: [],
+            studyTarget: d?.studyTarget || 'استذكار حر ومراجعة متباعدة'
+          };
+        }
+      }
+      return mapped;
+    }
+  }
+  return G7_WEEKLY_SCHEDULE;
+}
+
+window.onScheduleGroupChange = async function(groupName) {
+  _currentAcademicGroup = groupName;
+  const uid = getUID();
+  if (uid && db) {
+    await db.from('users').update({ academic_group: groupName }).eq('telegram_id', uid).catch(() => {});
+  }
+  const subTitle = document.getElementById('scheduleWeekSubTitle');
+  if (subTitle) {
+    subTitle.textContent = `جدول الأسبوع الرسمي لـ ${groupName} (Block 7)`;
+  }
+  renderScheduleSection();
+};
 
 function getCairoLiveStatus() {
   const now = new Date();
@@ -6369,7 +6429,8 @@ function getCairoLiveStatus() {
   const todayKey = dayKeys[dayIdx];
   const dayFullName = dayNames[dayIdx];
 
-  const todayData = G7_WEEKLY_SCHEDULE[todayKey];
+  const currentSchedule = getActiveWeeklySchedule();
+  const todayData = currentSchedule[todayKey];
   let rightNow = '';
   let nextUp = '';
   const isCollegeDay = !!todayData?.isCollegeDay;
@@ -6391,13 +6452,13 @@ function getCairoLiveStatus() {
       rightNow = '🕌 استراحة صلاة الظهر والغداء وشحن الطاقة!';
       nextUp = `⏰ 12:30 م: ${todayData.sessions[2].name} (${todayData.sessions[2].loc})`;
     } else if (currentMins >= 750 && currentMins < 850) {
-      rightNow = `🩺 أنت الآن في سكشن جروب 7 الأول:<br><b>${todayData.sessions[2].name}</b><br><small style="color: #34d399;">📍 المكان: <b>${todayData.sessions[2].loc}</b></small>`;
+      rightNow = `🩺 أنت الآن في سكشن ${_currentAcademicGroup} الأول:<br><b>${todayData.sessions[2].name}</b><br><small style="color: #34d399;">📍 المكان: <b>${todayData.sessions[2].loc}</b></small>`;
       nextUp = `⏰ 02:15 م: ${todayData.sessions[3].name} (${todayData.sessions[3].loc})`;
     } else if (currentMins >= 850 && currentMins < 855) {
       rightNow = '🚶‍♂️ فاصل 5 دقائق: التوجه لقاعة السكشن الثاني.';
       nextUp = `⏰ 02:15 م: ${todayData.sessions[3].name} (${todayData.sessions[3].loc})`;
     } else if (currentMins >= 855 && currentMins < 955) {
-      rightNow = `🩺 أنت الآن في سكشن جروب 7 الثاني:<br><b>${todayData.sessions[3].name}</b><br><small style="color: #34d399;">📍 المكان: <b>${todayData.sessions[3].loc}</b></small>`;
+      rightNow = `🩺 أنت الآن في سكشن ${_currentAcademicGroup} الثاني:<br><b>${todayData.sessions[3].name}</b><br><small style="color: #34d399;">📍 المكان: <b>${todayData.sessions[3].loc}</b></small>`;
       nextUp = '⏰ 04:00 م: انتهاء دوام الكلية والعودة للمنزل 🍲';
     } else if (currentMins >= 955 && currentMins < 1050) {
       rightNow = '🍲 فترة العودة والراحة: تناول وجبة الغداء وقيلولة لاستعادة النشاط الذهني.';
@@ -6447,8 +6508,34 @@ function getCairoLiveStatus() {
 }
 
 async function renderScheduleSection() {
-  const status = getCairoLiveStatus();
   const uid = getUID();
+  if (uid && !_userGroupLoaded) {
+    try {
+      const { data: userRow } = await userQuery('users').eq('telegram_id', uid).maybeSingle();
+      if (userRow?.academic_group) {
+        _currentAcademicGroup = userRow.academic_group;
+        const sel = document.getElementById('scheduleGroupSelect');
+        if (sel) sel.value = _currentAcademicGroup;
+      }
+      _userGroupLoaded = true;
+    } catch (e) {}
+  }
+
+  const headerTitle = document.getElementById('scheduleHeaderTitle');
+  if (headerTitle) {
+    const studentName = (currentUserProfile?.full_name || (isAdmin() ? 'د. عبدالله' : 'دكتور زميل'));
+    headerTitle.textContent = `📅 قسم جدولي وإدارة السكاشن • ${studentName} (${_currentAcademicGroup}) 🏛️✨`;
+  }
+  const subTitle = document.getElementById('scheduleWeekSubTitle');
+  if (subTitle) {
+    subTitle.textContent = `جدول الأسبوع الرسمي لـ ${_currentAcademicGroup} (Block 7)`;
+  }
+  const groupSel = document.getElementById('scheduleGroupSelect');
+  if (groupSel && groupSel.value !== _currentAcademicGroup) {
+    groupSel.value = _currentAcademicGroup;
+  }
+
+  const status = getCairoLiveStatus();
   const todayIso = new Date().toISOString().split('T')[0];
 
   // 1. Update Clock & Badges
@@ -6574,21 +6661,22 @@ async function renderScheduleSection() {
     }
   }
 
-  // 6. Render Weekly Schedule Cards for Group 7
+  // 6. Render Weekly Schedule Cards for Selected Group
   const container = document.getElementById('weeklyScheduleCardsContainer');
   if (container) {
+    const currentSchedule = getActiveWeeklySchedule();
     let daysToRender = [];
     if (_selectedScheduleDay === 'all') {
       daysToRender = ['أحد', 'إثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'];
-    } else if (G7_WEEKLY_SCHEDULE[_selectedScheduleDay]) {
+    } else if (currentSchedule[_selectedScheduleDay]) {
       daysToRender = [_selectedScheduleDay];
     }
 
     let cardsHtml = '';
     daysToRender.forEach(dKey => {
-      const dayData = G7_WEEKLY_SCHEDULE[dKey];
+      const dayData = currentSchedule[dKey];
       const isToday = status.dayKey === dKey;
-      const isCollege = !!dayData.isCollegeDay;
+      const isCollege = !!dayData?.isCollegeDay;
 
       cardsHtml += `
         <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid ${isToday ? '#38bdf8' : 'rgba(255, 255, 255, 0.08)'}; border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: ${isToday ? '0 0 16px rgba(56, 189, 248, 0.15)' : 'none'};">
