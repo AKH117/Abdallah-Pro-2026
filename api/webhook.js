@@ -196,8 +196,8 @@ if (process.env.PORT) {
         if (pathname === '/api/version') {
           return res.status(200).json({
             ok: true,
-            version: '3.1.0-Sync-Live-AutoDeploy',
-            commit: 'test-auto-deploy',
+            version: '3.2.0-NoTopicSpoiler-CurfewEnforced',
+            commit: 'remove-topic-spoiler-and-midnight-burst',
             timestamp: new Date().toISOString()
           });
         }
