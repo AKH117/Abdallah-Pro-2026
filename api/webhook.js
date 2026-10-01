@@ -196,8 +196,8 @@ if (process.env.PORT) {
         if (pathname === '/api/version') {
           return res.status(200).json({
             ok: true,
-            version: '3.2.0-NoTopicSpoiler-CurfewEnforced',
-            commit: 'remove-topic-spoiler-and-midnight-burst',
+            version: '3.5.0-CleanQuestionStem-ChoicesOnlyPoll',
+            commit: 'clean-question-stem-and-poll-v3.5',
             timestamp: new Date().toISOString()
           });
         }
