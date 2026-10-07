@@ -1,9 +1,12 @@
 $src = Get-Content 'scripts\CredReader.cs' -Raw
 Add-Type -TypeDefinition $src
 
-$token = [CredReader]::GetCredentialSecretUtf8('GitHub - https://api.github.com/abdullah0109624')
+$token = [CredReader]::GetCredentialSecretUtf8('GitHub - https://api.github.com/AKH117')
 if (-not $token) {
-    $token = [CredReader]::GetCredentialSecret('GitHub - https://api.github.com/abdullah0109624')
+    $token = [CredReader]::GetCredentialSecret('GitHub - https://api.github.com/AKH117')
+}
+if (-not $token) {
+    $token = [CredReader]::GetCredentialSecretUtf8('git:https://github.com')
 }
 
 if ($token) {
