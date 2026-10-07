@@ -15,6 +15,7 @@ if ($token) {
     $cleanToken = [System.Uri]::EscapeDataString($token)
     $pushUrl = "https://${cleanToken}@github.com/AKH117/Abdallah-Pro-2026.git"
     git push $pushUrl main
+    git fetch $pushUrl main:refs/remotes/origin/main
     if ($LASTEXITCODE -eq 0) {
         Write-Output "🎉 SUCCESS: Pushed to GitHub successfully!"
     } else {
